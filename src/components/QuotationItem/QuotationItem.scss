@@ -1,0 +1,13 @@
+.quotation-item {
+	&:not(:last-child) {
+		margin-bottom: 0.75rem;
+	}
+
+	&__qtd-input-label {
+		font-weight: bold;
+		margin-right: 0.5rem;
+	}
+	&__qtd-input {
+		max-width: 4rem;
+	}
+}
