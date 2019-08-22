@@ -16,29 +16,20 @@ const styles = {
 	},
 };
 
+const regExp = /^\d*$/;
+
+
 function QuotationItem({qtd, name, index, unitPrice, setItemQtd}) {
 	function handleQtdChange(event) {
 		/** This function handle the qtd input changes
 		 * Params:
 		 * - event object with "target" key
 		 */
-		let newQtd = event.target.value || '0';
-
-		if (isNaN(newQtd)) {
-			return;
+		const newQtd = event.target.value;
+		
+		if (regExp.test(newQtd)) {
+			setItemQtd(index, parseInt(newQtd, 10));
 		}
-
-		if (newQtd.startsWith('0')) {
-			newQtd = newQtd.substring(1);
-		}
-
-		newQtd = Number(newQtd);
-
-		if (!Number.isInteger(newQtd)) {
-			return;
-		}
-
-		setItemQtd(index, parseInt(newQtd, 10));
 	}
 
 	return (

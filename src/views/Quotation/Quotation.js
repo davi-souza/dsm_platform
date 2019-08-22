@@ -1,35 +1,24 @@
 import React, {useState} from 'react';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
-import Button from '@material-ui/core/Button';
+import QuotationUpload from '../../components/QuotationUpload';
 import QuotationItem from '../../components/QuotationItem';
 import QuotationBasket from '../../components/QuotationBasket';
 import QuotationItemsContext from '../../contexts/quotationItemsContext';
 import './Quotation.scss';
 
-const mockItems = [
-	{
-		name: 'Turbina do motor',
-		qtd: 1,
-		material: 'Iron',
-		unitPrice: {
-			amount: 10000,
-			currency: 'R$',
-		},
-	},
-	{
-		name: 'Corpo do tubo',
-		qtd: 1,
-		material: "Steel",
-		unitPrice: {
-			amount: 20000,
-			currency: 'R$',
-		},
-	},
-];
-
 function Quotation() {
-	const [items, setItems] = useState(mockItems);
+	const [items, setItems] = useState([
+		{
+				name: 'Turbina do motor',
+				qtd: 1,
+				material: 'Iron',
+				unitPrice: {
+					amount: 10000,
+					currency: 'R$',
+				},
+		},
+	]);
 
 	function setItemQtd(itemIndex, newQtd) {
 		/**	This function updates the qtd of a item
@@ -57,9 +46,6 @@ function Quotation() {
 				}}
 			>
 				<Grid container spacing={1}>
-					<Grid item xs={12}>
-						<Button>Adicionar peça</Button>
-					</Grid>
 					<Grid
 						item
 						xs={12}
@@ -75,6 +61,7 @@ function Quotation() {
 								)}
 							/>
 						))}
+						<QuotationUpload />
 					</Grid>
 					<Grid item xs={12} md={3}>
 						<QuotationBasket />
