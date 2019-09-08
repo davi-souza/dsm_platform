@@ -1,23 +1,32 @@
-import React, { useState, useRef } from 'react';
+import React, { useContext, useRef } from 'react';
 import Box from '@material-ui/core/Box';
-import LinearProgress from '@material-ui/core/LinearProgress';
 import Button from '@material-ui/core/Button';
+import quotationItemsContext from '../../contexts/quotationItemsContext';
 import { uploadFile } from '../../libs/fetch/upload';
 import './QuotationUpload.scss';
 
 
 function QuotationUpload() {
-	const [loading, setLoading] = useState(false);
 	const inputEl = useRef(null);
+	const {
+		uploading,
+		setUploading,
+		addItem
+	} = useContext(quotationItemsContext);
 
 	async function handleChange(event) {
-		setLoading(true);
+		setUploading(true);
 
-		const res = await uploadFile(event.target.files[0]);
+		try {
+			const res = await uploadFile(event.target.files[0]);
 
-		console.log(res);
-
-		setLoading(false);
+			addItem({
+				...res.part,
+			});
+		} catch (err) {
+		} finally {
+			setUploading(false);
+		}
 	}
 
 	function openFileInput() {
@@ -39,11 +48,10 @@ function QuotationUpload() {
 			<Button
 				fullWidth
 				onClick={openFileInput}
-				disabled={loading}
+				disabled={uploading}
 			>
 				Adicionar Arquivo
 			</Button>
-			{loading && <LinearProgress id="quotation-upload-loading" />}
 		</Box>
 	);
 }

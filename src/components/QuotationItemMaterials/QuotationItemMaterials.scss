@@ -1,0 +1,17 @@
+.quotation-item-materials {
+	&__selected {
+		&-label {
+			color: rgba(0, 0, 0, 0.4);
+			font-size: 0.7rem;
+		}
+		&-value {
+			font-size: 1rem;
+			margin: 0.1rem 0;
+		}
+	}
+
+	&__mat-label {
+		color: rgba(0, 0, 0, 0.4);
+		font-size: 0.7rem;
+	}
+}

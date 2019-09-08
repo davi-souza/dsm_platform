@@ -1,22 +1,26 @@
+import { FetchError, processError } from '../errors';
+
 export async function uploadFile(file) {
 	const formData = new FormData();
 
 	formData.append('file', file);
 
 	try {
-		const response = await fetch('/api/v1/files/upload', {
+		const response = await fetch('/api/file/upload', {
 			method: 'POST',
 			body: formData,
 		});
 
 		if (!response.ok) {
-			console.log('Error uploading file');
-			return {};
+			const {status, errors} = await response.json();
+
+			throw new FetchError(errors[0].message || 'Error uploading file', status || 500);
 		}
 
 		return await response.json();
 	} catch (err) {
-		console.log('Error uploading file:', err);
-		return {};
+		processError(err);
+		
+		throw err;
 	}
 }
