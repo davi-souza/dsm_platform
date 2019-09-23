@@ -1,11 +1,11 @@
 export class FetchError extends Error {
-	constructor(msg, status) {
-		super(msg);
+	constructor(message, status) {
+		super(message);
 		this.status = status;
 	}
 }
 
-export function processError(err) {
+export function processFetchError(err) {
 	if (err instanceof FetchError) {
 		console.error(err.status, err.message);
 	} else if (err instanceof Error) {

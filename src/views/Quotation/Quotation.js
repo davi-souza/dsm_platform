@@ -1,122 +1,92 @@
-import React, {useState, useEffect} from 'react';
+import React from 'react';
 import Container from '@material-ui/core/Container';
-import Grid from '@material-ui/core/Grid';
-import LinearProgress from '@material-ui/core/LinearProgress';
-import QuotationUpload from '../../components/QuotationUpload';
-import QuotationItem from '../../components/QuotationItem';
-import QuotationBasket from '../../components/QuotationBasket';
-import QuotationItemsContext from '../../contexts/quotationItemsContext';
-import { getMaterials } from '../../libs/fetch/materials';
-import { changePartOptions } from '../../libs/fetch/part';
+import QuotationItemList from '../../components/QuotationItemList';
+import AppContext from '../../contexts/AppContext';
+import QuotationContext from '../../contexts/QuotationContext';
+import { getMaterials } from '../../libs/fetch/material';
+import { changePartConfig } from '../../libs/fetch/part';
 import './Quotation.scss';
 
 function Quotation() {
-	const [uploading, setUploading] = useState(false);
-	const [materials, setMaterials] = useState([]);
-	const [items, setItems] = useState([]);
-	const [partLoading, setPartLoading] = useState(false);
+	const [items, setItems] = React.useState(mockItems);
+	const [itemsLoading, setItemsLoading] = React.useState(false);
+	const [materials, setMaterials] = React.useState([]);
+	const {handleOpenSnackbar} = React.useContext(AppContext);
 
-	useEffect(() => {
-		getMaterials().then(setMaterials);
+	React.useEffect(() => {
+		getMaterials().then(({data, error}) => {
+			if (!error) {
+				setMaterials(data);
+			}
+		});
 	}, []);
 
-	/**	This function updates the qtd of a item
-	 * @param {number} itemIndex	Index of the item in the array
-	 * @param {number} newQtd		New qtd value
-	 */
-	function setItemQtd(itemIndex, newQtd) {
-		if (newQtd < 0) {
-			return;
-		}
+	function savePartConfigChanges(input) {
+		setItemsLoading(true);
 
-		const newItems = [...items];
+		changePartConfig(input)
+			.then(({data, error}) => {
+				if (data) {
+					const newItems = items.map(item => {
+						if (item.id === input.part_id) {
+							return data;
+						}
 
-		newItems[itemIndex].qtd = newQtd;
+						return item;
+					});
+
+					setItems(newItems);
+
+					handleOpenSnackbar('Peça atualizada com sucesso!');
+				} else if (error) {
+					handleOpenSnackbar(error.message);
+				}
+			})
+			.finally(() => {
+				setItemsLoading(false);
+			});
+	}
+
+	function removeItem(index) {
+		const newItems = items.filter((_, i) => i !== index);
 
 		setItems(newItems);
-	}
-
-	/** Insert file to items
-	 * @param {object} newItem Item object
-	 */
-	function addItem(item) {
-		setItems([...items, item]);
-	}
-
-	/** Remove file to items
-	 * @param {number} itemIndex Item index at array
-	 */
-	function removeItem(itemIndex) {
-		let newItems = [...items];
-		newItems.splice(itemIndex, 1);
-		setItems(newItems);
-	}
-
-	/** Change item options
-	 * @param {number}	Item index in array
-	 * @param {string}	Material type id (uuid)
-	 * @param {number}	Item qtd
-	 */
-	async function handlePartOptionsChange(index, material_type_id, qtd) {
-		const {id} = items[index];
-
-		setPartLoading(true);
-
-		try {
-			const newPart = await changePartOptions({id, material_type_id, qtd});
-
-			const newItems = [...items];
-
-			newItems[index] = newPart;
-
-			setItems(newItems);
-		} finally {
-			setPartLoading(false);
-		}
 	}
 
 	return (
-		<Container maxWidth="lg">
-			<QuotationItemsContext.Provider 
-				value={{
-					uploading,
-					setUploading,
-					materials,
-					items,
-					setItemQtd,
-					addItem,
-					removeItem,
-					partLoading,
-					handlePartOptionsChange,
-				}}
-			>
-				<Grid container spacing={1}>
-					<Grid item xs={12}>
-						{uploading && <LinearProgress />}
-						<QuotationUpload />
-					</Grid>
-					<Grid
-						item
-						xs={12}
-						md={9}
-					>
-						{items.map((item, index) => (
-							<QuotationItem
-								key={'quotation-item-' + index}
-								{...Object.assign(
-									item,
-									{index},
-								)}
-							/>
-						))}
-					</Grid>
-					<Grid item xs={12} md={3}>
-						<QuotationBasket />
-					</Grid>
-				</Grid>
-			</QuotationItemsContext.Provider>
-		</Container>
+		<QuotationContext.Provider value={{
+			items,
+			itemsLoading,
+			savePartConfigChanges,
+			removeItem,
+			materials,
+		}}>
+			<Container maxWidth="lg">
+				<QuotationItemList />
+			</Container>
+		</QuotationContext.Provider>
 	);
 }
+
+const mockItems = [
+	{
+		id: 'b723951f-9776-4fb9-896d-a61f369423e0',
+		name: 'mock.step',
+		material_type: {
+			id: 'cfc560d7-b2e1-47d8-921c-1c4a5720205d',
+			name: 'Alumínio 5083 / 5082',
+		},
+		heat_treatment: null,
+		superficial_treatment: {
+			id: '22b26118-c992-4d14-94e5-4ff1a942637d',
+			name: 'Anodização',
+		},
+		tolerance: null,
+		finishing: null,
+		screw_amount: 0,
+		amount: 1,
+		unit_price: 6315,
+	},
+];
 
 export default Quotation;

@@ -1,14 +1,63 @@
+$color: #455a64;
+$font-color: rgba($color, 0.7);
+
 .quotation-item {
-	&:not(:last-child) {
-		margin-bottom: 0.75rem;
+	background-color: #fff;
+	color: $font-color;
+
+	border: 1px solid rgba($color, 0.3);
+	border-radius: 0.5rem;
+
+	&:hover {
+		box-shadow: 0px 1px 3px 0px rgba($color, 0.2),0px 1px 1px 0px rgba($color, 0.14),0px 2px 1px -1px rgba($color, 0.12);
 	}
 
-	&__qtd-input-label {
-		font-weight: bold;
-		margin-right: 0.5rem;
+    transition: box-shadow 0.5s;
+	
+	&-header, &-config, &-footer {
+		padding: 0.5rem 0;
 	}
 
-	&__qtd-input {
-		max-width: 4rem;
+	&-header {
+		&__part-name {
+			font-size: 1.2rem;
+			font-weight: bold;
+
+			margin-left: 1rem !important;
+		}
+
+		&__edit-button {
+			margin-right: 1rem !important;
+		}
+	}
+
+	&-config-container {
+		font-size: 0.8rem;
+
+		&__label {
+			font-weight: bold;
+		}
+	}
+
+	&-footer {
+		&__amount {
+			margin-left: 1rem !important;
+
+			input {
+				border: 1px solid rgba($color, 0.3);
+				border-radius: 0.5rem;
+
+				margin-left: 0.3rem;
+
+				text-align: center;
+
+				padding: 0.15rem 0;
+				max-width: 5rem;
+			}
+		}
+
+		&__unit-price {
+			margin-right: 1rem !important;
+		}
 	}
 }

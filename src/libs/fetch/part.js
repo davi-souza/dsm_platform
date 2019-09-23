@@ -1,41 +1,64 @@
-function query({id, material_type_id, qtd}) {
-	return `
-	mutation RootMutation {
-		changePartOptions(
-			part_id: "${id}",
-			material_type_id: "${material_type_id}",
-			qtd: ${qtd}
-		) {
+import { handleGraphQLResponse } from './handler';
+
+const changePartOptionsQuery = `
+mutation RootMutation($input: PartOptionsInputType!) {
+	changePartOptions(input: $input) {
+		id
+		name
+		material_type {
 			id
 			name
-			material_type_id
-			unit_price
-			qtd
 		}
+		heat_treatment {
+			id
+			name
+		}
+		superficial_treatment {
+			id
+			name
+		}
+		tolerance
+		finishing
+		screw_amount
+		amount
+		unit_price
 	}
-	`.trim();
 }
+`.trim();
 
 /**
- * Change Part options (i.e., material type or qtd)
- * @param {object}	Part object
- *            {string} id				Part id (uuid)
- *            {string} material_Type_id	Material type id (uuid)
- *            {number} qtd				Qtd
- * @return {object}	Part object too
- *             {string} id					Part id
- *             {string} name				Part Name
- *             {string} material_type_id	Material type id
- *             {number} unit_price			Part unit price
- *             {number} qtd					Qtd of the order
+ * Change Part options
+ * @param {object} input							Part options object
+ *            {string} part_id						Part's id (uuid)
+ *            {string} material_type_id				Part's material type
+ *            {string} heat_treatment_id			Part's heat treatment. It can be null
+ *            {string} superficial_treatment_id		Part's superficial treatment. It can be null
+ *            {string} tolerance					Part's tolerance. It can be null.
+ *            {string} finishing					Part's finishing. It can be null
+ *            {number} screw_amount					Part's number of screws
+ *            {number} amount						How many parts to be created
+ * @return {object}
+ *            {object} data							GraphQL response data. It can be null
+ *                {string} id						Part's id (uuid)
+ *                {string} name						Part's name
+ *                {object} material_type			Part's material type
+ *                    {string} name					Material type's name
+ *                    {string} id					Material type's id
+ *                {object} heat_treatment			Part's heat treatment. It can be null
+ *                    {string} name					Heat Treatment's name
+ *                    {string} id					Heat treatment's id
+ *                {object} superficial_treatment	Part's superficial treatment. It can be null
+ *                    {string} name					Superficial Treatment's name
+ *                    {string} id					Superficial treatment's id
+ *                {string} tolerance				Part's tolerance. It can be null.
+ *                {string} finishing				Part's finishing. It can be null
+ *                {number} screw_amount				Part's number of screws
+ *                {number} unit_price				Part's unit price. It's multiplied by 100 (int)
+ *            {object} error						Error object. It can be null
+ *                {number} status					HTTP status code
+ *                {string} message
  */
-export async function changePartOptions({id, material_type_id, qtd})  {
-	let partQtd = qtd;
-
-	if (isNaN(partQtd)) {
-		partQtd = 0;
-	}
-	
+export async function changePartConfig(input)  {
 	try {
 		const res = await fetch('/api/graphql', {
 			method: 'post',
@@ -44,20 +67,21 @@ export async function changePartOptions({id, material_type_id, qtd})  {
 				'content-type': 'application/json',
 			},
 			body: JSON.stringify({
-				query: query({id, material_type_id, qtd: partQtd}),
+				query: changePartOptionsQuery,
+				variables: { input },
 			}),
 		});
 
-		if (!res.ok) {
-			throw new Error('Unable to change part options');
-		}
-
-		const {data} = await res.json();
-
-		return data.changePartOptions;
+		return await handleGraphQLResponse(res, 'changePartOptions');
 	} catch (err) {
-		console.warn(err);
+		console.error(err);
 
-		throw err;
+		return {
+			data: null,
+			error: {
+				status: 500,
+				message: 'Houve um error',
+			},
+		};
 	}
 }
