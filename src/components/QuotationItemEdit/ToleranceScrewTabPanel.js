@@ -6,18 +6,12 @@ import TextField from '@material-ui/core/TextField';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import { renderFinishing } from '../../libs/format/finishing';
 
-const possibleFinishings = [
-	'STANDARD',
-	'RECTIFIED',
-	'POLISHED',
-];
-
-function ToleranceFinishingTabPanel(props) {
+function ToleranceScrewTabPanel(props) {
 	const {
 		tolerance,
 		setTolerance,
-		finishing,
-		setFinishing
+		screwAmount,
+		setScrewAmount,
 	} = props;
 
 	function handleToleranceChange(event) {
@@ -28,14 +22,20 @@ function ToleranceFinishingTabPanel(props) {
 		}
 	}
 
-	function handleFinishingClick(newFinishing) {
-		return function (e) {
-			setFinishing(newFinishing);
+	function handleScrewAmountChange(event) {
+		let newValue = event.target.value;
+
+		if (/^\d*$/.test(newValue)) {
+			if (!isNaN(newValue) && newValue !== '') {
+				newValue = parseInt(newValue, 10);
+			}
+
+			setScrewAmount(newValue);
 		}
 	}
 
 	return (
-		<Grid container spacing={2}>
+		<Grid container spacing={1}>
 			<Grid item xs={12} sm={6}>
 				<Grid
 					container
@@ -46,51 +46,37 @@ function ToleranceFinishingTabPanel(props) {
 							Tolerância
 						</Typography>
 					</Grid>
-					<Grid item xs={12}>
+					<Grid item xs={12} className="quotation-item-edit__tolerance-finishing-grid">
 						<TextField
-							type="number"
-							value={tolerance !== null ? tolerance : ''}
 							InputProps={{
 								startAdornment: <InputAdornment position="start">0.</InputAdornment>,
 								endAdornment: <InputAdornment position="end">mm</InputAdornment>
 							}}
 							onChange={handleToleranceChange}
+							type="text"
+							value={tolerance !== null ? tolerance : ''}
 						/>
 					</Grid>
 				</Grid>
 			</Grid>
 			<Grid item xs={12} sm={6}>
-				<Grid
-					container
-					alignItems="flex-start"
-				>
+				<Grid container>
 					<Grid item xs={12}>
 						<Typography variant="h6" color="primary">
-							Acabamento
+							Roscas
 						</Typography>
 					</Grid>
-					{possibleFinishings.map(f => (
-						<Grid item xs={12} key={'possible-finishings-' + f}>
-							<Button
-								className="quotation-item-edit__config-button"
-								color="primary"
-								fullWidth
-								onClick={handleFinishingClick(f)}
-								variant={
-									f === finishing || (!finishing && f === 'STANDARD') ?
-									"outlined"
-									:
-									"text"
-								}
-							>
-								{renderFinishing(f)}
-							</Button>
-						</Grid>
-					))}
+					<Grid item xs={12} className="quotation-item-edit__tolerance-finishing-grid">
+						<TextField
+							onChange={handleScrewAmountChange}
+							type="number"
+							value={screwAmount}
+						/>
+					</Grid>
 				</Grid>
 			</Grid>
 		</Grid>
 	);
 }
 
-export default ToleranceFinishingTabPanel;
+export default ToleranceScrewTabPanel;

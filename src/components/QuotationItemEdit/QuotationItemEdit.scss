@@ -1,5 +1,13 @@
 .quotation-item-edit {
 	&__config-button {
-		font-size: 0.75rem !important;
+		font-size: 0.8rem !important;
+	}
+
+	&__tolerance-finishing-grid {
+		align-items: center;
+		display: flex;
+		justify-content: center;
+
+		font-size: 1.2rem !important;
 	}
 }

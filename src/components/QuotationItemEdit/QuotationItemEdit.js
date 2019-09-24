@@ -11,8 +11,8 @@ import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import MaterialsTabPanel from './MaterialsTabPanel';
-import TreatmentsTabPanel from './TreatmentsTabPanel';
-import ToleranceFinishingTabPanel from './ToleranceFinishingTabPanel';
+import TreatmentsFinishingTabPanel from './TreatmentsFinishingTabPanel';
+import ToleranceScrewTabPanel from './ToleranceScrewTabPanel';
 import AppContext from '../../contexts/AppContext';
 import QuotationContext from '../../contexts/QuotationContext';
 import './QuotationItemEdit.scss';
@@ -62,12 +62,20 @@ function QuotationItemEdit({item, open, onCancel}) {
 	}
 
 	function handleSaveConfig() {
+		function processTolerance(raw) {
+			if (!raw) {
+				return null;
+			}
+
+			return parseFloat('0.' + raw);
+		}
+
 		savePartConfigChanges({
 			part_id: item.id,
 			material_type_id: materialType.id,
 			heat_treatment_id: heatTreatment ? heatTreatment.id : null,
 			superficial_treatment_id: superficialTreatment ? superficialTreatment.id : null,
-			tolerance,
+			tolerance: processTolerance(tolerance),
 			finishing,
 			screw_amount: screwAmount,
 			amount: item.amount,
@@ -113,8 +121,8 @@ function QuotationItemEdit({item, open, onCancel}) {
 						scrollButtons="auto"
 					>
 						<Tab label="Material" id="edit-tab-material" />
-						<Tab label="Tratamentos" id="edit-tab-treatments" />
-						<Tab label="Tolerância & Acabamento" id="edit-tab-tolerance&finishing" />
+						<Tab label="Tratamentos & Acabamento" id="edit-tab-treatments&finishing" />
+						<Tab label="Tolerância & Roscas" id="edit-tab-tolerance&screw" />
 					</Tabs>
 				</AppBar>
 				<div style={style.panels}>
@@ -127,21 +135,23 @@ function QuotationItemEdit({item, open, onCancel}) {
 					}
 					{
 						tabValue === 1 &&
-						<TreatmentsTabPanel
+						<TreatmentsFinishingTabPanel
 							materialTypeId={materialType.id}
 							heatTreatment={heatTreatment}
 							setHeatTreatment={setHeatTreatment}
 							superficialTreatment={superficialTreatment}
 							setSuperficialTreatment={setSuperficialTreatment}
+							finishing={finishing}
+							setFinishing={setFinishing}
 						/>
 					}
 					{
 						tabValue === 2 &&
-						<ToleranceFinishingTabPanel
+						<ToleranceScrewTabPanel
 							tolerance={tolerance}
 							setTolerance={setTolerance}
-							finishing={finishing}
-							setFinishing={setFinishing}
+							screwAmount={screwAmount}
+							setScrewAmount={setScrewAmount}
 						/>
 					}
 				</div>
