@@ -10,10 +10,8 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
-import MaterialsTabPanel from './MaterialsTabPanel';
-import TreatmentsFinishingTabPanel from './TreatmentsFinishingTabPanel';
-import ToleranceScrewTabPanel from './ToleranceScrewTabPanel';
-import AppContext from '../../contexts/AppContext';
+import FirstTabPanel from './FirstTabPanel';
+import SecondTabPanel from './SecondTabPanel';
 import QuotationContext from '../../contexts/QuotationContext';
 import './QuotationItemEdit.scss';
 
@@ -22,8 +20,8 @@ const style = {
 		paddingTop: 0,
 		paddingLeft: 0,
 		paddingRight: 0,
-		minHeight: '25rem',
-		maxHeight: '25rem',
+		minHeight: '30rem',
+		maxHeight: '30rem',
 	},
 	appBar: {
 		backgroundColor: '#fff',
@@ -43,19 +41,23 @@ function QuotationItemEdit({item, open, onCancel}) {
 	const [tolerance, setTolerance] = React.useState(item.tolerance);
 	const [finishing, setFinishing] = React.useState(item.finishing);
 	const [screwAmount, setScrewAmount] = React.useState(item.screw_amount);
-	const {handleOpenSnackbar} = React.useContext(AppContext);
 	const {savePartConfigChanges} = React.useContext(QuotationContext);
 
 	React.useEffect(() => {
-		if (materialType.id === item.material_type.id) {
-			setHeatTreatment(item.heat_treatment);
-			setSuperficialTreatment(item.superficial_treatment);
+		const {
+			material_type,
+			heat_treatment,
+			superficial_treatment,
+		} = item;
+
+		if (materialType.id === material_type.id) {
+			setHeatTreatment(heat_treatment);
+			setSuperficialTreatment(superficial_treatment);
 		} else {
-			handleOpenSnackbar('Tratamentos resetados');
 			setHeatTreatment(null);
 			setSuperficialTreatment(null);
 		}
-	}, [materialType]);
+	}, [item, materialType]);
 
 	function handleChangeTab(event, newValue) {
 		setTabValue(newValue);
@@ -117,37 +119,36 @@ function QuotationItemEdit({item, open, onCancel}) {
 						onChange={handleChangeTab}
 						indicatorColor="primary"
 						textColor="primary"
-						variant="scrollable"
+						variant="fullWidth"
 						scrollButtons="auto"
 					>
-						<Tab label="Material" id="edit-tab-material" />
-						<Tab label="Tratamentos & Acabamento" id="edit-tab-treatments&finishing" />
-						<Tab label="Tolerância & Roscas" id="edit-tab-tolerance&screw" />
+						<Tab
+							label="Material e Tratamentos"
+							id="edit-tab-material&treatments"
+						/>
+						<Tab
+							label="Acabamento, Tolerância e Roscas"
+							id="edit-tab-finishing&tolerance&screw"
+						/>
 					</Tabs>
 				</AppBar>
 				<div style={style.panels}>
 					{
 						tabValue === 0 &&
-						<MaterialsTabPanel
+						<FirstTabPanel
 							materialType={materialType}
 							setMaterialType={setMaterialType}
-						/>
-					}
-					{
-						tabValue === 1 &&
-						<TreatmentsFinishingTabPanel
-							materialTypeId={materialType.id}
 							heatTreatment={heatTreatment}
 							setHeatTreatment={setHeatTreatment}
 							superficialTreatment={superficialTreatment}
 							setSuperficialTreatment={setSuperficialTreatment}
-							finishing={finishing}
-							setFinishing={setFinishing}
 						/>
 					}
 					{
-						tabValue === 2 &&
-						<ToleranceScrewTabPanel
+						tabValue === 1 &&
+						<SecondTabPanel
+							finishing={finishing}
+							setFinishing={setFinishing}
 							tolerance={tolerance}
 							setTolerance={setTolerance}
 							screwAmount={screwAmount}

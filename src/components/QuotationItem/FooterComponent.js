@@ -67,19 +67,15 @@ function FooterComponent({item}) {
 				>
 					Quantidade
 				</span>
-				{
-					itemsLoading ?
-					<CircularProgress color="primary" size={20} />
-					:
-					<input
-						type="number"
-						value={amountToRender}
-						onChange={handleChange}
-						onKeyPress={handleOnKeyPress}
-						onBlur={handleCommitAmountChange}
-						className="quotation-item-footer__amount-value"
-					/>	
-				}
+				<input
+					className="quotation-item-footer__amount-value"
+					disabled={itemsLoading}
+					onBlur={handleCommitAmountChange}
+					onChange={handleChange}
+					onKeyPress={handleOnKeyPress}
+					type="number"
+					value={amountToRender}
+				/>	
 			</Grid>
 			<Grid
 				item
@@ -97,7 +93,7 @@ function FooterComponent({item}) {
 }
 
 FooterComponent.propTypes = {
-	amount: PropTypes.number.isRequired,
+	item: PropTypes.object.isRequired,
 };
 
 export default FooterComponent;

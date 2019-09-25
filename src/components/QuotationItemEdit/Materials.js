@@ -1,30 +1,21 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import QuotationContext from '../../contexts/QuotationContext';
 
 function getMaterial(materials, materialType) {
-	for (const material of materials) {
-		for (const type of material.material_types) {
-			if (type.id === materialType.id) {
-				return {...material};
-			}
-		}
-	}
+	return materials.find(m => m.material_types.find(mt => mt.id === materialType.id));
 }
 
-function MaterialsTabPanel({materialType, setMaterialType}) {
+function Materials({materialType, setMaterialType}) {
 	const [material, setMaterial] = React.useState({});
 	const {materials} = React.useContext(QuotationContext);
 
 	React.useEffect(() => {
-		const mat = getMaterial(materials, materialType);
-
-		if (JSON.stringify(mat) !== JSON.stringify(material)) {
-			setMaterial(mat);
-		}
-	}, [materialType]);
+		setMaterial(getMaterial(materials, materialType));
+	}, [materials, materialType]);
 
 	function handleMaterialClick(newMaterial) {
 		return function (event) {
@@ -39,7 +30,7 @@ function MaterialsTabPanel({materialType, setMaterialType}) {
 	}
 
 	return (
-		<Grid container>
+		<Grid container spacing={1}>
 			<Grid item xs={12} sm={6}>
 				<Grid
 					container
@@ -104,4 +95,9 @@ function MaterialsTabPanel({materialType, setMaterialType}) {
 	);
 }
 
-export default MaterialsTabPanel;
+Materials.propTypes = {
+	materialType: PropTypes.object.isRequired,
+	setMaterialType: PropTypes.func.isRequired,
+};
+
+export default Materials;
