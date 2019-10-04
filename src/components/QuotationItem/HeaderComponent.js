@@ -4,7 +4,6 @@ import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import QuotationItemEdit from '../QuotationItemEdit';
 import QuotationContext from '../../contexts/QuotationContext';
 
@@ -42,30 +41,22 @@ function HeaderComponent({index, item}) {
 					{item.name}
 				</Grid>
 				<Grid className="quotation-item-value">
-					{
-						itemsLoading ?
-						<CircularProgress color="primary" size={42} />
-						:
-						<IconButton
-							color="primary"
-							onClick={handleOpenEdit}
-							title="Editar peça"
-						>
-							<EditIcon />
-						</IconButton>
-					}
-					{
-						itemsLoading ?
-						<CircularProgress color="primary" size={42} />
-						:
-						<IconButton
-							color="primary"
-							onClick={handleRemoveItem}
-							title="Remover peça"
-						>
-							<DeleteIcon />
-						</IconButton>
-					}
+					<IconButton
+						disabled={itemsLoading}
+						color="primary"
+						onClick={handleOpenEdit}
+						title="Editar peça"
+					>
+						<EditIcon />
+					</IconButton>
+					<IconButton
+						disabled={itemsLoading}
+						color="primary"
+						onClick={handleRemoveItem}
+						title="Remover peça"
+					>
+						<DeleteIcon />
+					</IconButton>
 				</Grid>
 			</Grid>
 			<QuotationItemEdit

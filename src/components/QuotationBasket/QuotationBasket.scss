@@ -1,0 +1,27 @@
+$color: #455a64;
+$font-color: rgba($color, 0.7);
+
+.quotation-basket {
+	background-color: #fff;
+	border: 1px solid rgba($color, 0.3);
+	border-radius: 0.5rem;
+
+	padding: 0.5rem;
+
+	&__subtotal {
+		flex-grow: 1;
+
+		&-label, &-value {
+			color: $font-color;
+		}
+
+		&-label {
+			font-size: 0.9rem;
+		}
+
+		&-value {
+			font-size: 1.1rem;
+			font-weight: bold;
+		}
+	}
+}

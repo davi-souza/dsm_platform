@@ -1,45 +1,60 @@
-import { FetchError} from '../errors';
+import { handleGraphQLResponse } from './handler';
 
-function loginQuery(email, password) {
-	return `
-		mutation RootMutation {
-			login (
-				email: "${email}",
-				password: "${password}"
-			) {
-				name
-				token
-			}
+const loginQuery = `
+mutation RootMutation($input: LoginInputType!) {
+	login (input: $input) {
+		name
+		email
+		jwt
+		addresses {
+			id
+			state
+			municipality
+			address
+			address_number
+			complement
+			postcode
 		}
-	`.trim();
+	}
 }
+`.trim();
 
-function registerUserQuery(name, phone_number, email, password, address) {
-	return `
-		mutation RootMutation {
-			registerUser (
-				name: "${name}",
-				phone_number: "${phone_number}",
-				email: "${email}",
-				password: "${password}",
-				addresses: ["${address}"]
-			) {
-				name
-				token
-			}
+const registerUserQuery = `
+mutation RootMutation($input: RegisterUserInputType!) {
+	registerUser (input: $input) {
+		name
+		email
+		jwt
+		addresses {
+			id
+			state
+			municipality
+			address
+			address_number
+			complement
+			postcode
 		}
-	`.trim();
+	}
 }
+`.trim();
 
 /**
  * Log in function
  * @param {string} email	User email
  * @param {string} password	User password
  * @return {object}	Log In payload
- *             {string} name			User's name
- *             {string} phone_number	User's phone number
- *             {string} email			User's email
- *             {string} token			Log in token (jwt)
+ *             {string} name				User's name
+ *             {string} phone_number		User's phone number
+ *             {string} email				User's email
+ *             {string} jwt					Log in token (jwt)
+ *             {object[]} addresses			User's addresses
+ *                 {string} id				Address' id
+ *                 {string} state			Address' state
+ *                 {string} municipality	Address' municipality
+ *                 {string} address			Address
+ *                 {string} adress_number	Address' number
+ *                 {string} complement		Address' complement
+ *                 {string} postcode		Address' postcode
  */
 export async function login(email, password) {
 	try {
@@ -50,17 +65,14 @@ export async function login(email, password) {
 				'content-type': 'application/json',
 			},
 			body: JSON.stringify({
-				query: loginQuery(email, password),
+				query: loginQuery,
+				variables: {
+					input: { email, password, },
+				},
 			}),
 		});
 
-		if (!res.ok) {
-			throw new FetchError(res.statusText, res.status);
-		}
-
-		const {data} = await res.json();
-
-		return data.login;
+		return await handleGraphQLResponse(res, 'login');
 	} catch (err) {
 		console.warn(err);
 
@@ -70,18 +82,26 @@ export async function login(email, password) {
 
 /**
  * Register user function
- * @param {string} name			User name
- * @param {string} phone_number	User phone_numbe
- * @param {string} email		User email
- * @param {string} password		User password
- * @param {string} address		User address
+ * @param {string} name						User name
+ * @param {string} phone_number				User phone_numbe
+ * @param {string} email					User email
+ * @param {string} password					User password
+ * @param {object[]} addresses				User addresses
  * @return {object}	Log In payload
- *             {string} name			User's name
- *             {string} phone_number	User's phone number
- *             {string} email			User's email
- *             {string} token			Log in token (jwt)
+ *             {string} name				User's name
+ *             {string} phone_number		User's phone number
+ *             {string} email				User's email
+ *             {string} jwt					Log in token (jwt)
+ *             {object[]} addresses			User's addresses
+ *                 {string} id				Address' id
+ *                 {string} state			Address' state
+ *                 {string} municipality	Address' municipality
+ *                 {string} address			Address
+ *                 {string} adress_number	Address' number
+ *                 {string} complement		Address' complement
+ *                 {string} postcode		Address' postcode
  */
-export async function registerUser(name, phone_number, email, password, address) {
+export async function registerUser(name, phone_number, email, password, addresses) {
 	try {
 		const res = await fetch('/api/graphql', {
 			method: 'post',
@@ -90,23 +110,20 @@ export async function registerUser(name, phone_number, email, password, address)
 				'content-type': 'application/json',
 			},
 			body: JSON.stringify({
-				query: registerUserQuery(
-					name,
-					phone_number,
-					email,
-					password,
-					address
-				),
+				query: registerUserQuery,
+				variables: {
+					input: {
+						name,
+						phone_number,
+						email,
+						password,
+						addresses
+					},
+				},
 			}),
 		});
 
-		if (!res.ok) {
-			throw new FetchError(res.statusText, res.status);
-		}
-
-		const {data} = await res.json();
-
-		return data.registerUser;
+		return await handleGraphQLResponse(res, 'registerUser');
 	} catch (err) {
 		console.warn(err);
 

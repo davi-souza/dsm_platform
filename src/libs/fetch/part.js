@@ -19,9 +19,24 @@ mutation RootMutation($input: PartOptionsInputType!) {
 		}
 		tolerance
 		finishing
-		screw_amount
+		screw {
+			type
+			amount
+		}
 		amount
 		unit_price
+	}
+}
+`.trim();
+
+const partBatchInfoQuery = `
+mutation RootMutation($input: PartBatchInfoInputType!) {
+	partBatchInfo(input: $input) {
+		subtotal
+		delivery {
+			price
+			at
+		}
 	}
 }
 `.trim();
@@ -73,6 +88,57 @@ export async function changePartConfig(input)  {
 		});
 
 		return await handleGraphQLResponse(res, 'changePartOptions');
+	} catch (err) {
+		console.error(err);
+
+		return {
+			data: null,
+			error: {
+				status: 500,
+				message: 'Houve um error',
+			},
+		};
+	}
+}
+
+/**
+ * Get batch info
+ * @param {object[]} parts							Part options object
+ *            {string} part_id						Part's id (uuid)
+ *            {string} material_type_id				Part's material type
+ *            {string} heat_treatment_id			Part's heat treatment. It can be null
+ *            {string} superficial_treatment_id		Part's superficial treatment. It can be null
+ *            {string} tolerance					Part's tolerance. It can be null.
+ *            {string} finishing					Part's finishing. It can be null
+ *            {object} screw						Part's screw config
+ *            {number} amount						How many parts to be created
+ * @param {string} delivery							Delivery option
+ * @return {object}
+ *             {number} subtotal					Batch subtotal
+ *             {object} delivery					Delivery info
+ *                 {number} price					Delivery price
+ *                 {string} at						Estimated delivery date
+ */
+export async function partBatchInfo(parts, delivery = 'WORKINGDAYS_15')  {
+	try {
+		const res = await fetch('/api/graphql', {
+			method: 'post',
+			credentials: 'same-origin',
+			headers: {
+				'content-type': 'application/json',
+			},
+			body: JSON.stringify({
+				query: partBatchInfoQuery,
+				variables: {
+					input: {
+						parts,
+						delivery,
+					},
+				},
+			}),
+		});
+
+		return await handleGraphQLResponse(res, 'partBatchInfo');
 	} catch (err) {
 		console.error(err);
 

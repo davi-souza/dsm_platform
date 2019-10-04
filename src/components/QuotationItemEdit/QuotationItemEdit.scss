@@ -1,13 +1,17 @@
 .quotation-item-edit {
-	&__config-button {
-		font-size: 0.8rem !important;
+	&__panels {
+		padding: 1rem;
 	}
 
 	&__tolerance-finishing-grid {
 		align-items: center;
 		display: flex;
-		justify-content: center;
+		justify-content: flex-start;
 
 		font-size: 1.2rem !important;
+
+		@media all and (min-width: 600px) {
+			padding: 0 3rem;
+		}
 	}
 }

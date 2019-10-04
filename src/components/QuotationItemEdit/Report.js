@@ -6,46 +6,45 @@ import Grid from '@material-ui/core/Grid';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import Typography from '@material-ui/core/Typography';
-import { renderFinishing } from '../../libs/format/finishing';
 
-function Finishing({finishing, setFinishing}) {
+function Report({report, setReport}) {
 	const [
-		selectedFinishing,
-		setSelectedFinishing
+		selectedReport,
+		setSelectedReport
 	] = React.useState(options[0]);
 
 	React.useEffect(() => {
-		if (finishing === null) {
-			setSelectedFinishing(options[0]);
+		if (!report) {
+			setSelectedReport(options[0]);
 		} else {
-			setSelectedFinishing(finishing);
+			setSelectedReport(report);
 		}
-	}, [finishing]);
+	}, [report]);
 
-	function handleFinishingChange(event) {
-		setFinishing(event.target.value);
+	function handleReportChange(event) {
+		setReport(event.target.value);
 	}
 
 	return (
 		<Grid container spacing={1}>
 			<Grid item xs={12}>
 				<Typography variant="h6" color="primary">
-					Acabamento
+					Tipo de relatório
 				</Typography>
 			</Grid>
 			<Grid item xs={12}>
 				<FormControl component="fieldset" fullWidth>
 					<RadioGroup
-						value={selectedFinishing}
-						onChange={handleFinishingChange}
+						value={selectedReport}
+						onChange={handleReportChange}
 					>
 						<Grid container spacing={1}>
 							{options.map(o => (
-								<Grid item xs={12} sm={4} key={'select-finishing-' + o}>
+								<Grid item xs={12} sm={4} key={'select-report-' + o}>
 									<FormControlLabel
 										value={o}
 										control={<Radio/>}
-										label={renderFinishing(o)}
+										label={renderReport(o)}
 									/>
 								</Grid>
 							))}		
@@ -59,13 +58,20 @@ function Finishing({finishing, setFinishing}) {
 
 const options = [
 	'STANDARD',
-	'RECTIFIED',
-	'POLISHED',
+	'MEASUREMENT_3D',
 ];
 
-Finishing.propTypes = {
-	finishing: PropTypes.string,
-	setFinishing: PropTypes.func.isRequired,
+function renderReport(raw) {
+	if (raw === 'MEASUREMENT_3D') {
+		return 'Medição Tridimensional';
+	}
+
+	return 'Padrão';
+}
+
+Report.propTypes = {
+	report: PropTypes.string,
+	setReport: PropTypes.func.isRequired,
 };
 
-export default Finishing;
+export default Report;

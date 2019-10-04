@@ -4,6 +4,8 @@
 		overflow: hidden;
 		display: inline-block;
 		width: 100%;
+
+		padding: 0.5rem 0;
 	}
 
 	&-input {
@@ -12,13 +14,6 @@
 		top: 0;
 		opacity: 0;
 		width: 100%;
-	}
-
-	&-loading {
-		position: absolute;
-		top: 10%;
-		left: 0;
-		flex-grow: 1;
 	}
 }
 

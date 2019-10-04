@@ -1,5 +1,6 @@
 import React from 'react';
 import Container from '@material-ui/core/Container';
+import QuotationUpload from '../../components/QuotationUpload';
 import QuotationItemList from '../../components/QuotationItemList';
 import AppContext from '../../contexts/AppContext';
 import QuotationContext from '../../contexts/QuotationContext';
@@ -37,7 +38,7 @@ function Quotation() {
 
 					setItems(newItems);
 
-					handleOpenSnackbar('Peça atualizada com sucesso!');
+					handleOpenSnackbar('Atualização com sucesso');
 				} else if (error) {
 					handleOpenSnackbar(error.message);
 				}
@@ -45,6 +46,10 @@ function Quotation() {
 			.finally(() => {
 				setItemsLoading(false);
 			});
+	}
+
+	function addItem(item) {
+		setItems([...items, item]);
 	}
 
 	function removeItem(index) {
@@ -57,36 +62,20 @@ function Quotation() {
 		<QuotationContext.Provider value={{
 			items,
 			itemsLoading,
+			setItemsLoading,
 			savePartConfigChanges,
+			addItem,
 			removeItem,
 			materials,
 		}}>
-			<Container maxWidth="lg">
+			<Container className="quotation-view__container" maxWidth="lg">
 				<QuotationItemList />
+				<QuotationUpload />
 			</Container>
 		</QuotationContext.Provider>
 	);
 }
 
-const mockItems = [
-	{
-		id: 'b723951f-9776-4fb9-896d-a61f369423e0',
-		name: 'mock.step',
-		material_type: {
-			id: 'cfc560d7-b2e1-47d8-921c-1c4a5720205d',
-			name: 'Alumínio 5083 / 5082',
-		},
-		heat_treatment: null,
-		superficial_treatment: {
-			id: '22b26118-c992-4d14-94e5-4ff1a942637d',
-			name: 'Anodização',
-		},
-		tolerance: null,
-		finishing: null,
-		screw_amount: 0,
-		amount: 1,
-		unit_price: 6315,
-	},
-];
+const mockItems = Array(1).fill(JSON.parse('{"id":"e5906b4e-0db2-47f3-8f58-6195d0e0ecef","name":"test.stp","material_type":{"id":"cfc560d7-b2e1-47d8-921c-1c4a5720205d","name":"Alumínio 5083 / 5082"},"heat_treatment":null,"superficial_treatment":null,"tolerance":null,"finishing":null,"screw":null,"amount":1,"unit_price":31657}'));
 
 export default Quotation;

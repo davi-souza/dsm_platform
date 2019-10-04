@@ -1,11 +1,13 @@
-.quotation-item-list__empty {
-	display: flex;
-	flex-flow: column nowrap;
-	justify-content: center;
-	align-items: center;
+.quotation-item-list {
+	&__empty {
+		display: flex;
+		flex-flow: column nowrap;
+		justify-content: center;
+		align-items: center;
 
-	span {
-		color: rgba(69, 90, 100, 0.1);
-		font-size: 2rem;
+		span {
+			color: rgba(69, 90, 100, 0.1);
+			font-size: 2rem;
+		}
 	}
 }

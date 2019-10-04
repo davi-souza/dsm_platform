@@ -1,5 +1,3 @@
-import { FetchError, processError } from '../errors';
-
 export async function uploadFile(file) {
 	const formData = new FormData();
 
@@ -12,15 +10,30 @@ export async function uploadFile(file) {
 		});
 
 		if (!response.ok) {
-			const {status, errors} = await response.json();
-
-			throw new FetchError(errors[0].message || 'Error uploading file', status || 500);
+			return {
+				data: null,
+				error: {
+					status: response.status,
+					message: 'Não foi possível fazer upload do arquivo',
+				}
+			};
 		}
 
-		return await response.json();
+		const data = await response.json();
+
+		return {
+			data,
+			error: null,
+		};
 	} catch (err) {
-		processError(err);
-		
-		throw err;
+		console.error(err);
+
+		return {
+			data: null,
+			error: {
+				status: 500,
+				message: 'Não foi possível fazer upload do arquivo',
+			}
+		};
 	}
 }

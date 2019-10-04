@@ -1,46 +1,37 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import AppBar from '@material-ui/core/AppBar';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogActions from '@material-ui/core/DialogActions';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
+import Divider from '@material-ui/core/Divider';
+import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
-import FirstTabPanel from './FirstTabPanel';
-import SecondTabPanel from './SecondTabPanel';
+import { withStyles } from '@material-ui/styles';
+import Material from './Material';
+import HeatTreatment from './HeatTreatment';
+import SuperficialTreatment from './SuperficialTreatment';
+import Finishing from './Finishing';
+import Tolerance from './Tolerance';
+import Screw from './Screw';
+import Engraving from './Engraving';
+import Report from './Report';
+import Knurled from './Knurled';
 import QuotationContext from '../../contexts/QuotationContext';
 import './QuotationItemEdit.scss';
 
-const style = {
-	dialogContent: {
-		paddingTop: 0,
-		paddingLeft: 0,
-		paddingRight: 0,
-		minHeight: '30rem',
-		maxHeight: '30rem',
-	},
-	appBar: {
-		backgroundColor: '#fff',
-	},
-	panels: {
-		paddingTop: '1rem',
-		paddingLeft: '0.5rem',
-		paddingRight: '0.5rem',
-	},
-};
-
-function QuotationItemEdit({item, open, onCancel}) {
-	const [tabValue, setTabValue] = React.useState(0);
+function QuotationItemEdit({classes, item, open, onCancel}) {
 	const [materialType, setMaterialType] = React.useState(item.material_type);
 	const [heatTreatment, setHeatTreatment] = React.useState(item.heat_treatment);
 	const [superficialTreatment, setSuperficialTreatment] = React.useState(item.superficial_treatment);
 	const [tolerance, setTolerance] = React.useState(item.tolerance);
 	const [finishing, setFinishing] = React.useState(item.finishing);
-	const [screwAmount, setScrewAmount] = React.useState(item.screw_amount);
+	const [screw, setScrew] = React.useState(item.screw);
+	const [engraving, setEngraving] = React.useState(item.engraving);
+	const [knurled, setKnurled] = React.useState(item.knurled);
+	const [report, setReport] = React.useState(item.report);
 	const {savePartConfigChanges} = React.useContext(QuotationContext);
 
 	React.useEffect(() => {
@@ -59,10 +50,6 @@ function QuotationItemEdit({item, open, onCancel}) {
 		}
 	}, [item, materialType]);
 
-	function handleChangeTab(event, newValue) {
-		setTabValue(newValue);
-	}
-
 	function handleSaveConfig() {
 		function processTolerance(raw) {
 			if (!raw) {
@@ -79,9 +66,13 @@ function QuotationItemEdit({item, open, onCancel}) {
 			superficial_treatment_id: superficialTreatment ? superficialTreatment.id : null,
 			tolerance: processTolerance(tolerance),
 			finishing,
-			screw_amount: screwAmount,
+			screw,
+			engraving,
+			knurled,
+			report,
 			amount: item.amount,
 		});
+
 		onCancel();
 	}
 
@@ -92,7 +83,51 @@ function QuotationItemEdit({item, open, onCancel}) {
 		JSON.stringify(superficialTreatment) !== JSON.stringify(item.superficial_treatment) ||
 		tolerance !== item.tolerance ||
 		finishing !== item.finishing ||
-		screwAmount !== item.screw_amount;
+		JSON.stringify(screw) !== JSON.stringify(item.screw) ||
+		engraving !== item.engraving ||
+		report !== item.report ||
+		knurled !== item.knurled;
+
+	const ConfigEditComponents = [
+		<Material
+			materialType={materialType}
+			setMaterialType={setMaterialType}
+		/>,
+		<HeatTreatment
+			heatTreatment={heatTreatment}
+			setHeatTreatment={setHeatTreatment}
+			materialTypeId={materialType.id}
+		/>,
+		<SuperficialTreatment
+			superficialTreatment={superficialTreatment}
+			setSuperficialTreatment={setSuperficialTreatment}
+			materialTypeId={materialType.id}
+		/>,
+		<Finishing
+			finishing={finishing}
+			setFinishing={setFinishing}
+		/>,
+		<Tolerance
+			tolerance={tolerance}
+			setTolerance={setTolerance}
+		/>,
+		<Screw
+			screw={screw}
+			setScrew={setScrew}
+		/>,
+		<Engraving
+			engraving={engraving}
+			setEngraving={setEngraving}
+		/>,
+		<Knurled
+			knurled={knurled}
+			setKnurled={setKnurled}
+		/>,
+		<Report
+			report={report}
+			setReport={setReport}
+		/>,
+	];
 
 	return (
 		<Dialog
@@ -112,49 +147,20 @@ function QuotationItemEdit({item, open, onCancel}) {
 					{item.name}
 				</Typography>
 			</DialogTitle>
-			<DialogContent style={style.dialogContent}>
-				<AppBar position="static" style={style.appBar}>
-					<Tabs
-						value={tabValue}
-						onChange={handleChangeTab}
-						indicatorColor="primary"
-						textColor="primary"
-						variant="fullWidth"
-						scrollButtons="auto"
-					>
-						<Tab
-							label="Material e Tratamentos"
-							id="edit-tab-material&treatments"
-						/>
-						<Tab
-							label="Acabamento, Tolerância e Roscas"
-							id="edit-tab-finishing&tolerance&screw"
-						/>
-					</Tabs>
-				</AppBar>
-				<div style={style.panels}>
-					{
-						tabValue === 0 &&
-						<FirstTabPanel
-							materialType={materialType}
-							setMaterialType={setMaterialType}
-							heatTreatment={heatTreatment}
-							setHeatTreatment={setHeatTreatment}
-							superficialTreatment={superficialTreatment}
-							setSuperficialTreatment={setSuperficialTreatment}
-						/>
-					}
-					{
-						tabValue === 1 &&
-						<SecondTabPanel
-							finishing={finishing}
-							setFinishing={setFinishing}
-							tolerance={tolerance}
-							setTolerance={setTolerance}
-							screwAmount={screwAmount}
-							setScrewAmount={setScrewAmount}
-						/>
-					}
+			<DialogContent className={classes.dialogContent}>
+				<div className="quotation-item-edit__panels">
+					<Grid container spacing={3}>
+						{ConfigEditComponents.map((c, cIndex) => (
+							<React.Fragment key={'edit-component-' + cIndex}>
+								<Grid item xs={12}>
+									{c}
+								</Grid>
+								<Grid item xs={12}>
+									<Divider light />
+								</Grid>
+							</React.Fragment>
+						))}
+					</Grid>
 				</div>
 			</DialogContent>
 			<DialogActions>
@@ -176,10 +182,27 @@ function QuotationItemEdit({item, open, onCancel}) {
 	);
 }
 
+const styles = {
+	dialogContent: {
+		padding: 0,
+		minHeight: '32rem',
+		maxHeight: '32rem',
+	},
+	appBar: {
+		backgroundColor: '#fff',
+	},
+	panels: {
+		paddingTop: '1rem',
+		paddingLeft: '0.5rem',
+		paddingRight: '0.5rem',
+	},
+};
+
 QuotationItemEdit.propTypes = {
+	classes: PropTypes.object,
 	item: PropTypes.object.isRequired,
 	open: PropTypes.bool.isRequired,
 	onCancel: PropTypes.func.isRequired,
 };
 
-export default QuotationItemEdit;
+export default withStyles(styles)(QuotationItemEdit);

@@ -12,7 +12,13 @@ export async function handleGraphQLResponse(res, dataKey) {
 			}
 
 			const {extensions} = errors[0]
-			throw new FetchError(extensions.message, extensions.status);
+
+			if (extensions && extensions.message && extensions.status) {
+				throw new FetchError(extensions.message, extensions.status);
+			} else {
+				console.error('Error message:', errors[0].message);
+				throw new FetchError('Houve um erro', 500);
+			}
 		}
 
 		return {

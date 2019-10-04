@@ -23,7 +23,7 @@ function Tolerance({tolerance, setTolerance}) {
 				>
 					<Grid item xs={12}>
 						<Typography variant="h6" color="primary">
-							Tolerância
+							Menor Tolerância
 						</Typography>
 					</Grid>
 					<Grid item xs={12} className="quotation-item-edit__tolerance-finishing-grid">

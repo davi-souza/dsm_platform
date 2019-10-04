@@ -1,31 +1,33 @@
-import React, { useContext, useRef } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
-import quotationItemsContext from '../../contexts/quotationItemsContext';
+import { withStyles } from '@material-ui/core/styles';
+import QuotationContext from '../../contexts/QuotationContext';
 import { uploadFile } from '../../libs/fetch/upload';
 import './QuotationUpload.scss';
 
 
-function QuotationUpload() {
-	const inputEl = useRef(null);
+function QuotationUpload({classes}) {
+	const inputEl = React.useRef(null);
 	const {
-		uploading,
-		setUploading,
-		addItem
-	} = useContext(quotationItemsContext);
+		itemsLoading,
+		setItemsLoading,
+		addItem,
+	} = React.useContext(QuotationContext);
 
 	async function handleChange(event) {
-		setUploading(true);
+		setItemsLoading(true);
 
 		try {
-			const res = await uploadFile(event.target.files[0]);
+			const {data} = await uploadFile(event.target.files[0]);
 
 			addItem({
-				...res.part,
+				...data.part,
 			});
 		} catch (err) {
 		} finally {
-			setUploading(false);
+			setItemsLoading(false);
 		}
 	}
 
@@ -46,9 +48,12 @@ function QuotationUpload() {
 				onChange={handleChange}
 			/>
 			<Button
+				color="primary"
+				className={classes.uploadButton}
+				disabled={itemsLoading}
 				fullWidth
 				onClick={openFileInput}
-				disabled={uploading}
+				variant="text"
 			>
 				Adicionar Arquivo
 			</Button>
@@ -56,4 +61,15 @@ function QuotationUpload() {
 	);
 }
 
-export default QuotationUpload;
+const styles = {
+	uploadButton: {
+		fontSize: '1.25rem',
+		height: '5rem',
+	},
+};
+
+QuotationUpload.propTypes = {
+	classes: PropTypes.object,
+};
+
+export default withStyles(styles)(QuotationUpload);

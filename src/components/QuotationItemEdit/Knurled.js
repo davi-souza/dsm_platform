@@ -6,46 +6,45 @@ import Grid from '@material-ui/core/Grid';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import Typography from '@material-ui/core/Typography';
-import { renderFinishing } from '../../libs/format/finishing';
 
-function Finishing({finishing, setFinishing}) {
+function Knurled({knurled, setKnurled}) {
 	const [
-		selectedFinishing,
-		setSelectedFinishing
+		selectedKnurled,
+		setSelectedKnurled
 	] = React.useState(options[0]);
 
 	React.useEffect(() => {
-		if (finishing === null) {
-			setSelectedFinishing(options[0]);
+		if (knurled === true) {
+			setSelectedKnurled('YES');
 		} else {
-			setSelectedFinishing(finishing);
+			setSelectedKnurled('NO');
 		}
-	}, [finishing]);
+	}, [knurled]);
 
-	function handleFinishingChange(event) {
-		setFinishing(event.target.value);
+	function handleKnurledChange(event) {
+		setKnurled(event.target.value === 'YES');
 	}
 
 	return (
 		<Grid container spacing={1}>
 			<Grid item xs={12}>
 				<Typography variant="h6" color="primary">
-					Acabamento
+					Possui recartilhado?
 				</Typography>
 			</Grid>
 			<Grid item xs={12}>
 				<FormControl component="fieldset" fullWidth>
 					<RadioGroup
-						value={selectedFinishing}
-						onChange={handleFinishingChange}
+						value={selectedKnurled}
+						onChange={handleKnurledChange}
 					>
 						<Grid container spacing={1}>
 							{options.map(o => (
-								<Grid item xs={12} sm={4} key={'select-finishing-' + o}>
+								<Grid item xs={12} sm={4} key={'select-knurled-' + o}>
 									<FormControlLabel
 										value={o}
 										control={<Radio/>}
-										label={renderFinishing(o)}
+										label={renderKnurled(o)}
 									/>
 								</Grid>
 							))}		
@@ -58,14 +57,21 @@ function Finishing({finishing, setFinishing}) {
 }
 
 const options = [
-	'STANDARD',
-	'RECTIFIED',
-	'POLISHED',
+	'NO',
+	'YES',
 ];
 
-Finishing.propTypes = {
-	finishing: PropTypes.string,
-	setFinishing: PropTypes.func.isRequired,
+function renderKnurled(raw) {
+	if (raw === 'YES') {
+		return 'Sim';
+	}
+
+	return 'Não';
+}
+
+Knurled.propTypes = {
+	knurled: PropTypes.bool,
+	setKnurled: PropTypes.func.isRequired,
 };
 
-export default Finishing;
+export default Knurled;

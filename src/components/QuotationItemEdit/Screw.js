@@ -1,20 +1,58 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import FormControl from '@material-ui/core/FormControl';
 import Grid from '@material-ui/core/Grid';
+import Radio from '@material-ui/core/Radio';
+import RadioGroup from '@material-ui/core/RadioGroup';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 
-function Screw({screwAmount, setScrewAmount}) {
+function Screw({screw, setScrew}) {
+	const [
+		selectedScrew,
+		setSelectedScrew,
+	] = React.useState(options[0]);
+
+	React.useEffect(() => {
+		if (screw === null) {
+			setSelectedScrew(options[0]);
+		} else {
+			setSelectedScrew(
+				options.find(o => o === screw.type)
+			);
+		}
+	}, [screw]);
+
+	function handleScrewTypeChange(event) {
+		const newScrewType = event.target.value;
+
+		if (newScrewType === 'NONE') {
+			setScrew(null);
+		} else {
+			setScrew({
+				type: newScrewType,
+				amount: (screw && newScrewType === 'INTERNAL') ? screw.amount : 0,
+			});
+		}
+	}
+
 	function handleScrewAmountChange(event) {
+		const oldValue = screw ? screw.amount : 0;
 		let newValue = event.target.value;
 
-		if (/^\d*$/.test(newValue)) {
-			if (!isNaN(newValue) && newValue !== '') {
-				newValue = parseInt(newValue, 10);
-			}
-
-			setScrewAmount(newValue);
+		if (newValue === '') {
+			newValue = 0;
+		} else if (isNaN(newValue)) {
+			newValue = oldValue;
+		} else {
+			newValue = parseInt(newValue, 10);
 		}
+
+		setScrew({
+			type: screw.type,
+			amount: newValue,
+		});
 	}
 
 	return (
@@ -26,12 +64,50 @@ function Screw({screwAmount, setScrewAmount}) {
 							Roscas
 						</Typography>
 					</Grid>
-					<Grid item xs={12} className="quotation-item-edit__tolerance-finishing-grid">
+					<Grid item xs={12} sm={6}>
+						<FormControl component="fieldset" fullWidth>
+							<RadioGroup
+								value={selectedScrew}
+								onChange={handleScrewTypeChange}
+							>
+								<Grid container spacing={1}>
+									{options.map(o => (
+										<Grid item xs={12} sm={4} key={'select-screw-type-' + o}>
+											<FormControlLabel
+												value={o}
+												control={<Radio/>}
+												label={renderScrewType(o)}
+											/>
+										</Grid>
+									))}		
+								</Grid>
+							</RadioGroup>
+						</FormControl>
+					</Grid>
+					<Grid item xs={12} sm={6}>
 						<TextField
+							disabled={screw === null || screw.type === 'EXTERNAL'}
+							error={
+								(screw && screw.type === 'INTERNAL') ?
+								(screw.amount === 0)
+								:
+								false
+							}
+							helperText = {
+								(screw && screw.type === 'INTERNAL' && screw.amount === 0) ?
+								'Número deve ser maior ou igual a 1'
+								:
+								''
+							}
 							onChange={handleScrewAmountChange}
-							type="number"
-							value={screwAmount}
-						/>
+							type="text"
+							value={
+								(screw && screw.amount !== 0) ?
+								screw.amount.toString()
+								:
+								''
+							}
+						/>							
 					</Grid>
 				</Grid>
 			</Grid>
@@ -39,9 +115,28 @@ function Screw({screwAmount, setScrewAmount}) {
 	);
 }
 
+function renderScrewType(raw) {
+	if (raw === 'INTERNAL') {
+		return 'Interna';
+	} else if (raw === 'EXTERNAL') {
+		return 'Externa';
+	}
+
+	return 'Nenhuma';
+}
+
+const options = [
+	'NONE',
+	'EXTERNAL',
+	'INTERNAL',
+];
+
 Screw.propTypes = {
-	screwAmount: PropTypes.number.isRequired,
-	setScrewAmount: PropTypes.func.isRequired,
+	screw: PropTypes.exact({
+		type: PropTypes.oneOf(['EXTERNAL', 'INTERNAL']).isRequired,
+		amount: PropTypes.number.isRequired,
+	}),
+	setScrew: PropTypes.func.isRequired,
 };
 
 export default Screw;

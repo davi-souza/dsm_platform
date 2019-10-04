@@ -2,12 +2,12 @@ function hasLocalStorage() {
 	return 'localStorage' in window;
 }
 
-function getToken() {
+function getUserJwt() {
 	if (!hasLocalStorage()) {
 		return null;
 	}
 
-	return window.localStorage.getItem('user_jwt');
+	return window.localStorage.getItem('userJwt');
 }
 
 function getUserName() {
@@ -15,28 +15,51 @@ function getUserName() {
 		return null;
 	}
 
-	return window.localStorage.getItem('user_name');
+	return window.localStorage.getItem('userName');
 }
 
-export function getCredentials() {
+function getUserEmail() {
+	if (!hasLocalStorage()) {
+		return null;
+	}
+
+	return window.localStorage.getItem('userEmail');
+}
+
+export function getUserCredentials() {
 	return {
 		name: getUserName(),
-		token: getToken(),
+		email: getUserEmail(),
+		token: getUserJwt(),
 	};
 }
 
-export function setUserToken(token) {
+function setUserName(name) {
 	if (!hasLocalStorage()) {
 		return;
 	}
 
-	window.localStorage.setItem('user_jwt', token);
+	window.localStorage.setItem('userName', name);
 }
 
-export function setUserName(name) {
+function setUserJwt(jwt) {
 	if (!hasLocalStorage()) {
 		return;
 	}
 
-	window.localStorage.setItem('user_name', name);
+	window.localStorage.setItem('userJwt', jwt);
+}
+
+function setUserEmail(email) {
+	if (!hasLocalStorage()) {
+		return;
+	}
+
+	window.localStorage.setItem('userEmail', email);
+}
+
+export function setUserCredentials(name, email, jwt) {
+	setUserName(name);
+	setUserEmail(email);
+	setUserJwt(jwt);
 }
