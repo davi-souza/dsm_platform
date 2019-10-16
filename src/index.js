@@ -6,24 +6,13 @@ import { ThemeProvider } from '@material-ui/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
+import theme from './themes';
 import './index.scss';
 import 'typeface-roboto';
 
 const platformTheme = createMuiTheme({
-	palette: {
-		primary: {
-			main: '#455a64', // rgb(69, 90, 100)
-			dark: '#1c313a',
-			light: '#718792',
-			contrastText: '#ffffff',
-		},
-		secondary: {
-			main: '#ef5350',
-			dark: '#b61827',
-			light: '#ff867c',
-			contrastText: '#000000',
-		},
-	},
+	palette: theme, 
+	border: 'oi',
 });
 
 ReactDOM.render(

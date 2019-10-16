@@ -7,27 +7,25 @@ function BaseConfigComponent({classes, label, value}) {
 	let valueToRender = value;
 
 	if (!value && value !== 0) {
-		valueToRender = 'Não informado';
+		valueToRender = String.fromCharCode(8213);
 	}
 
 	return (
 		<Grid
-			container
-			direction="column"
-			justify="center"
-			alignItems="center"
 			className={classes.container}
+			container
+			direction="row"
+			justify="flex-start"
+			alignItems="center"
 		>
 			<Grid
 				item
-				xs={12}
 				className={classes.containerLabel}
 			>
-				{label}
+				{`${label}:`}
 			</Grid>
 			<Grid
 				item
-				xs={12}
 			>
 				{valueToRender}
 			</Grid>
@@ -35,14 +33,19 @@ function BaseConfigComponent({classes, label, value}) {
 	);
 }
 
-const styles = {
-	container: {
-		color: 'rgba(69, 90, 100, 0.7)',
-		fontSize: '0.8rem',
-	},
-	containerLabel: {
-		fontWeight: 'bold',
-	},
+function styles({palette}) {
+	return {
+		container: {
+			color: palette.primary.darkText,
+			fontSize: '0.85rem',
+			'& > *:first-child': {
+				paddingRight: '0.3rem',
+			},
+		},
+		containerLabel: {
+			fontWeight: 'bold',
+		},
+	};
 };
 
 

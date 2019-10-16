@@ -9,22 +9,7 @@ export async function uploadFile(file) {
 			body: formData,
 		});
 
-		if (!response.ok) {
-			return {
-				data: null,
-				error: {
-					status: response.status,
-					message: 'Não foi possível fazer upload do arquivo',
-				}
-			};
-		}
-
-		const data = await response.json();
-
-		return {
-			data,
-			error: null,
-		};
+		return await response.json();
 	} catch (err) {
 		console.error(err);
 
@@ -35,5 +20,33 @@ export async function uploadFile(file) {
 				message: 'Não foi possível fazer upload do arquivo',
 			}
 		};
+	}
+}
+
+export function uploadAuxiliaryFile(partId) {
+	return async function (file) {
+		const formData = new FormData();
+		const url = `/api/file/upload/auxiliary?part_id=${partId}`;
+
+		formData.append('file', file);
+
+		try {
+			const response = await fetch(url, {
+				method: 'POST',
+				body: formData,
+			});
+
+			return await response.json();
+		} catch (err) {
+			console.error(err);
+
+			return {
+				data: null,
+				error: {
+					status: 500,
+					message: 'Não foi possível fazer upload do arquivo',
+				}
+			};
+		}
 	}
 }

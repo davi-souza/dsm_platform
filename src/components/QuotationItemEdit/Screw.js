@@ -60,11 +60,11 @@ function Screw({screw, setScrew}) {
 			<Grid item xs={12}>
 				<Grid container>
 					<Grid item xs={12}>
-						<Typography variant="h6" color="primary">
+						<Typography variant="h6">
 							Roscas
 						</Typography>
 					</Grid>
-					<Grid item xs={12} sm={6}>
+					<Grid item xs={12}>
 						<FormControl component="fieldset" fullWidth>
 							<RadioGroup
 								value={selectedScrew}
@@ -72,42 +72,39 @@ function Screw({screw, setScrew}) {
 							>
 								<Grid container spacing={1}>
 									{options.map(o => (
-										<Grid item xs={12} sm={4} key={'select-screw-type-' + o}>
+										<Grid item xs={12} key={'select-screw-type-' + o}>
 											<FormControlLabel
 												value={o}
 												control={<Radio/>}
 												label={renderScrewType(o)}
 											/>
+											{
+												o === 'INTERNAL' && (
+													<TextField
+														disabled={screw === null || screw.type === 'EXTERNAL'}
+														error={
+															(screw && screw.type === 'INTERNAL') ?
+															(screw.amount === 0)
+															:
+															false
+														}
+														helperText="Número de roscas internas"
+														onChange={handleScrewAmountChange}
+														type="text"
+														value={
+															(screw && screw.amount !== 0) ?
+															screw.amount.toString()
+															:
+															''
+														}
+													/>							
+												)
+											}
 										</Grid>
 									))}		
 								</Grid>
 							</RadioGroup>
 						</FormControl>
-					</Grid>
-					<Grid item xs={12} sm={6}>
-						<TextField
-							disabled={screw === null || screw.type === 'EXTERNAL'}
-							error={
-								(screw && screw.type === 'INTERNAL') ?
-								(screw.amount === 0)
-								:
-								false
-							}
-							helperText = {
-								(screw && screw.type === 'INTERNAL' && screw.amount === 0) ?
-								'Número deve ser maior ou igual a 1'
-								:
-								''
-							}
-							onChange={handleScrewAmountChange}
-							type="text"
-							value={
-								(screw && screw.amount !== 0) ?
-								screw.amount.toString()
-								:
-								''
-							}
-						/>							
 					</Grid>
 				</Grid>
 			</Grid>
@@ -132,6 +129,7 @@ const options = [
 ];
 
 Screw.propTypes = {
+	classes: PropTypes.object,
 	screw: PropTypes.exact({
 		type: PropTypes.oneOf(['EXTERNAL', 'INTERNAL']).isRequired,
 		amount: PropTypes.number.isRequired,

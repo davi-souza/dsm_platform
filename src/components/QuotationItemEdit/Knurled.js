@@ -28,7 +28,7 @@ function Knurled({knurled, setKnurled}) {
 	return (
 		<Grid container spacing={1}>
 			<Grid item xs={12}>
-				<Typography variant="h6" color="primary">
+				<Typography variant="h6">
 					Possui recartilhado?
 				</Typography>
 			</Grid>
@@ -40,7 +40,11 @@ function Knurled({knurled, setKnurled}) {
 					>
 						<Grid container spacing={1}>
 							{options.map(o => (
-								<Grid item xs={12} sm={4} key={'select-knurled-' + o}>
+								<Grid
+									item
+									xs={12}
+									key={'select-knurled-' + o}
+								>
 									<FormControlLabel
 										value={o}
 										control={<Radio/>}

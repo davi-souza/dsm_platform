@@ -20,7 +20,9 @@ function SuperficialTreatment(props) {
 	} = props;
 
 	React.useEffect(() => {
-		setSuperficialTreatments(materialSuperficialTreatments(materials, materialTypeId));
+		setSuperficialTreatments(
+			materials.find(m => m.id === materialTypeId).superficial_treatments
+		);
 	}, [materialTypeId, materials]);
 
 	React.useEffect(() => {
@@ -53,7 +55,7 @@ function SuperficialTreatment(props) {
 			setSuperficialTreatment(null);
 		} else {
 			setSuperficialTreatment(
-				superficialTreatments.find(ht => ht.id === newSuperficialTreatment.value)
+				superficialTreatments.find(st => st.id === newSuperficialTreatment.value)
 			);
 		}
 	}
@@ -61,7 +63,7 @@ function SuperficialTreatment(props) {
 	return (
 		<Grid container spacing={2}>
 			<Grid item xs={12}>
-				<Typography color="primary" variant="h6">
+				<Typography variant="h6">
 					Tratamento Superficial
 				</Typography>
 			</Grid>
@@ -74,16 +76,6 @@ function SuperficialTreatment(props) {
 			</Grid>
 		</Grid>
 	);
-}
-
-function materialSuperficialTreatments(materials, materialTypeId) {
-	for (const material of materials) {
-		for (const type of material.material_types) {
-			if (type.id === materialTypeId) {
-				return [...type.superficial_treatments];
-			}
-		}
-	}
 }
 
 SuperficialTreatment.propTypes = {

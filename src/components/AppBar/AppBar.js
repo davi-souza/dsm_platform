@@ -1,24 +1,33 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import AppBar from '@material-ui/core/AppBar';
+import Button from '@material-ui/core/Button';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
+import { withStyles } from '@material-ui/core/styles';
 
-const style = {
-	appBar: {
-		backgroundColor: 'transparent',
-		color: 'rgba(69, 90, 100, 0.8)',
-		marginBottom: '1rem',
-	},
-};
-
-function AppBarComponent() {
+function AppBarComponent({classes}) {
 	return (
-		<AppBar elevation={0} position="static" style={style.appBar}>
-			<Toolbar>
-				<Typography variant="h6">Mech4u</Typography>
+		<AppBar color="primary" elevation={0} position="static" className={classes.appBar}>
+			<Toolbar variant="dense">
+				<Typography variant="h6" className={classes.title}>Mech4u</Typography>
+				<Button color="inherit" size="small">Contato</Button>
+				<Button color="inherit" size="small">Log In</Button>
 			</Toolbar>
 		</AppBar>
 	);
 }
 
-export default AppBarComponent;
+function styles(theme) {
+	return {
+		title: {
+			flexGrow: 1,
+		},
+	};
+};
+
+AppBarComponent.propTypes = {
+	classes: PropTypes.object,
+};
+
+export default withStyles(styles)(AppBarComponent);

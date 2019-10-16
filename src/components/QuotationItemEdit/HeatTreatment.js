@@ -20,7 +20,9 @@ function HeatTreatment(props) {
 	} = props;
 
 	React.useEffect(() => {
-		setHeatTreatments(materialHeatTreatments(materials, materialTypeId));
+		setHeatTreatments(
+			materials.find(m => m.id === materialTypeId).heat_treatments
+		);
 	}, [materialTypeId, materials]);
 
 	React.useEffect(() => {
@@ -61,7 +63,7 @@ function HeatTreatment(props) {
 	return (
 		<Grid container spacing={2}>
 			<Grid item xs={12}>
-				<Typography color="primary" variant="h6">
+				<Typography variant="h6">
 					Tratamento Térmico
 				</Typography>
 			</Grid>
@@ -74,16 +76,6 @@ function HeatTreatment(props) {
 			</Grid>
 		</Grid>
 	);
-}
-
-function materialHeatTreatments(materials, materialTypeId) {
-	for (const material of materials) {
-		for (const type of material.material_types) {
-			if (type.id === materialTypeId) {
-				return [...type.heat_treatments];
-			}
-		}
-	}
 }
 
 HeatTreatment.propTypes = {

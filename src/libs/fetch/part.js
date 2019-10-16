@@ -5,6 +5,12 @@ mutation RootMutation($input: PartOptionsInputType!) {
 	changePartOptions(input: $input) {
 		id
 		name
+		dimensions
+		auxiliary_files {
+			id
+			name
+			storage
+		}
 		material_type {
 			id
 			name
@@ -23,6 +29,10 @@ mutation RootMutation($input: PartOptionsInputType!) {
 			type
 			amount
 		}
+		marking
+		knurled
+		report
+		additional_info
 		amount
 		unit_price
 	}
@@ -50,7 +60,11 @@ mutation RootMutation($input: PartBatchInfoInputType!) {
  *            {string} superficial_treatment_id		Part's superficial treatment. It can be null
  *            {string} tolerance					Part's tolerance. It can be null.
  *            {string} finishing					Part's finishing. It can be null
- *            {number} screw_amount					Part's number of screws
+ *            {object} screw						Part's screw
+ *            {string} marking						Part's marking
+ *            {string} knurled						Part's knurled
+ *            {string} report						Part's report
+ *            {string} additional_info				Part's additional info
  *            {number} amount						How many parts to be created
  * @return {object}
  *            {object} data							GraphQL response data. It can be null
@@ -67,7 +81,11 @@ mutation RootMutation($input: PartBatchInfoInputType!) {
  *                    {string} id					Superficial treatment's id
  *                {string} tolerance				Part's tolerance. It can be null.
  *                {string} finishing				Part's finishing. It can be null
- *                {number} screw_amount				Part's number of screws
+ *                {object} screw					Part's screw
+ *                {string} marking					Part's marking
+ *                {string} knurled					Part's knurled
+ *                {string} report					Part's report
+ *                {string} additional_info			Part's additional info
  *                {number} unit_price				Part's unit price. It's multiplied by 100 (int)
  *            {object} error						Error object. It can be null
  *                {number} status					HTTP status code

@@ -28,8 +28,8 @@ function Report({report, setReport}) {
 	return (
 		<Grid container spacing={1}>
 			<Grid item xs={12}>
-				<Typography variant="h6" color="primary">
-					Tipo de relatório
+				<Typography variant="h6">
+					Tipo de relatório dimensional
 				</Typography>
 			</Grid>
 			<Grid item xs={12}>
@@ -40,7 +40,11 @@ function Report({report, setReport}) {
 					>
 						<Grid container spacing={1}>
 							{options.map(o => (
-								<Grid item xs={12} sm={4} key={'select-report-' + o}>
+								<Grid
+									item
+									xs={12}
+									key={'select-report-' + o}
+								>
 									<FormControlLabel
 										value={o}
 										control={<Radio/>}

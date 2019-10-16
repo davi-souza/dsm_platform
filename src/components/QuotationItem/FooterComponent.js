@@ -2,10 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Grid from '@material-ui/core/Grid';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import Typography from '@material-ui/core/Typography';
+import { withStyles } from '@material-ui/core/styles';
 import QuotationContext from '../../contexts/QuotationContext';
-import { renderNumber } from '../../libs/format/number';
+import { renderMoney } from '../../libs/format/number';
 
-function FooterComponent({item}) {
+function FooterComponent({classes, item}) {
 	const {
 		amount,
 		unit_price,
@@ -20,17 +22,19 @@ function FooterComponent({item}) {
 	function handleChange(event) {
 		let newValue = event.target.value;
 
-		if (/^\d*$/.test(newValue)) {
-			if (!isNaN(newValue) && newValue !== '') {
-				newValue = parseInt(newValue, 10);
-			}
-
-			setAmountToRender(newValue);
+		if (newValue === '') {
+			newValue = 0;
+		} else if (isNaN(newValue)) {
+			newValue = amountToRender;
+		} else {
+			newValue = parseInt(newValue, 10);
 		}
+
+		setAmountToRender(newValue);
 	}
 
 	function handleCommitAmountChange() {
-		if (amountToRender !== '' && amountToRender !== amount) {
+		if (amountToRender && amountToRender !== amount) {
 			savePartConfigChanges({
 				part_id: item.id,
 				material_type_id: item.material_type.id,
@@ -38,7 +42,10 @@ function FooterComponent({item}) {
 				superficial_treatment_id: item.superficial_treatment ? item.superficial_treatment.id : null,
 				tolerance: item.tolerance,
 				finishing: item.finishing,
-				screw_amount: item.screw_amount,
+				screw: item.screw,
+				marking: item.marking,
+				knurled: item.knurled,
+				report: item.report,
 				amount: amountToRender,
 			});
 		}
@@ -56,44 +63,85 @@ function FooterComponent({item}) {
 			direction="row"
 			justify="space-between"
 			alignItems="center"
-			className="quotation-item-footer"
+			className={classes.footerContainer}
 		>
 			<Grid
 				item
-				className="quotation-item-footer__amount"
 			>
 				<span
-					className="quotation-item-footer__amount-label"
+					className={classes.amountLabel}
 				>
 					Quantidade
 				</span>
 				<input
-					className="quotation-item-footer__amount-value"
+					className={classes.amountInput}
 					disabled={itemsLoading}
 					onBlur={handleCommitAmountChange}
 					onChange={handleChange}
 					onKeyPress={handleOnKeyPress}
-					type="number"
-					value={amountToRender}
+					type="text"
+					value={
+						amountToRender !== 0 ?
+						amountToRender
+						:
+						''
+					}
 				/>	
 			</Grid>
-			<Grid
-				item
-				className="quotation-item-footer__unit-price"
-			>
+			<Grid item>
 				{
 					itemsLoading ?
 					<CircularProgress color="primary" size={20} />
 					:
-					`R$ ${renderNumber(unit_price)}/unidade`
+					<Grid
+						alignItems="flex-start"
+						container
+						direction="column"
+						justify="flex-start"
+					>
+						{
+							amount > 1 && (
+								<Grid item>
+									<Typography color="inherit" variant="body2" component="span">
+										{`Unidade: ${renderMoney(unit_price)}`}
+									</Typography>
+								</Grid>
+							)
+						}
+						<Grid item>
+							<Typography color="inherit" variant="body2" component="span">
+								{`Subtotal: ${renderMoney(unit_price * amount)}`}
+							</Typography>
+						</Grid>
+					</Grid>
 				}
 			</Grid>
 		</Grid>
 	);
 }
 
+function styles({palette}) {
+	return {
+		footerContainer: {
+			color: palette.primary.darkText,
+			padding: '0.5rem 1rem',
+		},
+		amountLabel: {
+			paddingRight: '0.5rem',
+		},
+		amountInput: {
+			border: `1px solid ${palette.borders.primary}`,
+			borderRadius: '0.5rem',
+			padding: '0.15rem 0',
+			maxWidth: '5rem',
+			textAlign: 'center',
+		},
+	};
+};
+
 FooterComponent.propTypes = {
+	classes: PropTypes.object,
 	item: PropTypes.object.isRequired,
 };
 
-export default FooterComponent;
+export default withStyles(styles)(FooterComponent);

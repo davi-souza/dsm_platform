@@ -7,6 +7,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogActions from '@material-ui/core/DialogActions';
 import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
+import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { withStyles } from '@material-ui/styles';
@@ -16,22 +17,28 @@ import SuperficialTreatment from './SuperficialTreatment';
 import Finishing from './Finishing';
 import Tolerance from './Tolerance';
 import Screw from './Screw';
-import Engraving from './Engraving';
+import Marking from './Marking';
 import Report from './Report';
 import Knurled from './Knurled';
+import AdditionalInfo from './AdditionalInfo';
+import UploadAuxFile from './UploadAuxFile';
 import QuotationContext from '../../contexts/QuotationContext';
+import { isAuxFileNeeded } from '../../libs/checks/itemConfig';
 import './QuotationItemEdit.scss';
 
-function QuotationItemEdit({classes, item, open, onCancel}) {
+function QuotationItemEdit({classes, item, itemIndex, open, onCancel}) {
 	const [materialType, setMaterialType] = React.useState(item.material_type);
 	const [heatTreatment, setHeatTreatment] = React.useState(item.heat_treatment);
 	const [superficialTreatment, setSuperficialTreatment] = React.useState(item.superficial_treatment);
 	const [tolerance, setTolerance] = React.useState(item.tolerance);
 	const [finishing, setFinishing] = React.useState(item.finishing);
 	const [screw, setScrew] = React.useState(item.screw);
-	const [engraving, setEngraving] = React.useState(item.engraving);
+	const [marking, setMarking] = React.useState(item.marking);
 	const [knurled, setKnurled] = React.useState(item.knurled);
 	const [report, setReport] = React.useState(item.report);
+	const [additionalInfo, setAdditionalInfo] = React.useState(item.additional_info);
+	const [needAuxFile, setNeedAuxFile] = React.useState(false);
+	const [hasChanged, setHasChanged] = React.useState(false);
 	const {savePartConfigChanges} = React.useContext(QuotationContext);
 
 	React.useEffect(() => {
@@ -50,26 +57,59 @@ function QuotationItemEdit({classes, item, open, onCancel}) {
 		}
 	}, [item, materialType]);
 
+	React.useEffect(() => {
+		setNeedAuxFile(isAuxFileNeeded({
+			heatTreatment,
+			superficialTreatment,
+			finishing,
+			tolerance,
+			screw,
+			marking,
+			knurled,
+			report,
+			auxiliaryFiles: item.auxiliary_files,
+		}));
+
+		setHasChanged(
+			item.material_type.id !== materialType.id ||
+				JSON.stringify(heatTreatment) !== JSON.stringify(item.heat_treatment) ||
+				JSON.stringify(superficialTreatment) !== JSON.stringify(item.superficial_treatment) ||
+				tolerance !== item.tolerance ||
+				finishing !== item.finishing ||
+				JSON.stringify(screw) !== JSON.stringify(item.screw) ||
+				marking !== item.marking ||
+				report !== item.report ||
+				knurled !== item.knurled ||
+				additionalInfo !== item.additional_info
+		);
+	}, [
+		heatTreatment,
+		superficialTreatment,
+		finishing,
+		tolerance,
+		screw,
+		marking,
+		knurled,
+		report,
+		item.auxiliary_files,
+		additionalInfo,
+		materialType,
+		item,
+	]);
+
 	function handleSaveConfig() {
-		function processTolerance(raw) {
-			if (!raw) {
-				return null;
-			}
-
-			return parseFloat('0.' + raw);
-		}
-
 		savePartConfigChanges({
 			part_id: item.id,
 			material_type_id: materialType.id,
 			heat_treatment_id: heatTreatment ? heatTreatment.id : null,
 			superficial_treatment_id: superficialTreatment ? superficialTreatment.id : null,
-			tolerance: processTolerance(tolerance),
+			tolerance,
 			finishing,
 			screw,
-			engraving,
+			marking,
 			knurled,
 			report,
+			additional_info: additionalInfo,
 			amount: item.amount,
 		});
 
@@ -78,15 +118,6 @@ function QuotationItemEdit({classes, item, open, onCancel}) {
 
 	const fullScreen = useMediaQuery('(max-width:600px)');
 
-	const hasChanged = item.material_type.id !== materialType.id ||
-		JSON.stringify(heatTreatment) !== JSON.stringify(item.heat_treatment) ||
-		JSON.stringify(superficialTreatment) !== JSON.stringify(item.superficial_treatment) ||
-		tolerance !== item.tolerance ||
-		finishing !== item.finishing ||
-		JSON.stringify(screw) !== JSON.stringify(item.screw) ||
-		engraving !== item.engraving ||
-		report !== item.report ||
-		knurled !== item.knurled;
 
 	const ConfigEditComponents = [
 		<Material
@@ -115,9 +146,9 @@ function QuotationItemEdit({classes, item, open, onCancel}) {
 			screw={screw}
 			setScrew={setScrew}
 		/>,
-		<Engraving
-			engraving={engraving}
-			setEngraving={setEngraving}
+		<Marking
+			marking={marking}
+			setMarking={setMarking}
 		/>,
 		<Knurled
 			knurled={knurled}
@@ -135,72 +166,161 @@ function QuotationItemEdit({classes, item, open, onCancel}) {
 			disableEscapeKeyDown={true}
 			fullWidth
 			fullScreen={fullScreen}
-			maxWidth="lg"
+			maxWidth="md"
 			open={open}
-			scroll="body"
+			PaperProps={{ className: classes.paper }}
 		>
 			<DialogTitle
-				color="primary"
 				disableTypography={true}
 			>
-				<Typography variant="h6" color="primary">
+				<Typography variant="h6">
 					{item.name}
 				</Typography>
 			</DialogTitle>
 			<DialogContent className={classes.dialogContent}>
-				<div className="quotation-item-edit__panels">
-					<Grid container spacing={3}>
-						{ConfigEditComponents.map((c, cIndex) => (
-							<React.Fragment key={'edit-component-' + cIndex}>
-								<Grid item xs={12}>
-									{c}
-								</Grid>
-								<Grid item xs={12}>
-									<Divider light />
-								</Grid>
-							</React.Fragment>
-						))}
+				<Grid
+					container
+					className={classes.contentContainer}
+				>
+					<Grid
+						className={classes.configItem}
+						item
+						xs={7}
+					>
+						<Grid
+							className={classes.configContainer}
+							container
+						>
+							{ConfigEditComponents.map((c, cIndex) => (
+								<React.Fragment key={'edit-component-' + cIndex}>
+									<Grid item xs={12}>
+										{c}
+									</Grid>
+									<Grid item xs={12}>
+										<Divider light />
+									</Grid>
+								</React.Fragment>
+							))}
+						</Grid>
 					</Grid>
-				</div>
+					<Grid
+						className={classes.contentContainer}
+						item
+						xs={5}
+					>
+						<Grid
+							className={classes.auxContainer}
+							container
+							direction="column"
+							justify="space-between"
+							alignItems="center"
+							wrap="nowrap"
+						>
+							<Grid
+								className={classes.uploadAuxContainer}
+								item
+							>
+								<UploadAuxFile
+									needAuxFile={needAuxFile}
+									auxiliaryFiles={item.auxiliary_files}
+									itemIndex={itemIndex}
+									partId={item.id}
+								/>
+							</Grid>
+							<Grid
+								className={classes.addInfoContainer}
+								item
+							>
+								<AdditionalInfo
+									additionalInfo={additionalInfo}
+									setAdditionalInfo={setAdditionalInfo}
+								/>
+							</Grid>
+						</Grid>
+					</Grid>
+				</Grid>
 			</DialogContent>
 			<DialogActions>
 				<Button
-					color="primary"
+					color="inherit"
 					onClick={onCancel}
 				>
 					Cancelar
 				</Button>
-				<Button
-					color="primary"
-					disabled={!hasChanged}
-					onClick={handleSaveConfig}
+				<Tooltip
+					open={needAuxFile}
+					placement="top"
+					title={
+						<Typography color="inherit">
+							Para continuar, você deve inserir os arquivos de desenho 2D
+						</Typography>
+					}
 				>
-					Salvar
-				</Button>
+					<Button
+						color="inherit"
+						disabled={!hasChanged || needAuxFile}
+						onClick={handleSaveConfig}
+					>
+						Salvar
+					</Button>
+				</Tooltip>
 			</DialogActions>
 		</Dialog>
 	);
 }
 
-const styles = {
-	dialogContent: {
-		padding: 0,
-		minHeight: '32rem',
-		maxHeight: '32rem',
-	},
-	appBar: {
-		backgroundColor: '#fff',
-	},
-	panels: {
-		paddingTop: '1rem',
-		paddingLeft: '0.5rem',
-		paddingRight: '0.5rem',
-	},
+const height = 'calc(100vh - 14rem)',
+	uploadAuxHeight ='calc(100vh - 14rem - 178px)';
+
+function styles({palette}) {
+	return {
+		paper: {
+			color: palette.primary.darkText,
+		},
+		dialogContent: {
+			padding: 0,
+			height,
+			minHeight: height,
+			maxHeight: height,
+			overflowY: 'hidden',
+		},
+		contentContainer: {
+			height,
+		},
+		configItem: {
+			height: '100%',
+			overflowY: 'auto',
+		},
+		configContainer: {
+			padding: '0 1rem',
+			width: '100%',
+			'& > *': {
+				padding: '0.8rem 0',
+			},
+		},
+		auxContainer: {
+			height: '100%',
+		},
+		uploadAuxContainer: {
+			flexGrow: 1,
+			padding: '0.5rem',
+			width: '100%',
+			borderBottom: '1px solid rgba(0, 0, 0, 0.08)',
+			height: uploadAuxHeight,
+			maxHeight: uploadAuxHeight,
+			minHeight: uploadAuxHeight,
+		},
+		addInfoContainer: {
+			padding: '0.5rem',
+			width: '100%',
+		},
+	};
 };
 
 QuotationItemEdit.propTypes = {
-	classes: PropTypes.object,
+	classes: PropTypes.object.isRequired,
 	item: PropTypes.object.isRequired,
+	itemIndex: PropTypes.number.isRequired,
 	open: PropTypes.bool.isRequired,
 	onCancel: PropTypes.func.isRequired,
 };

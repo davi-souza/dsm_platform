@@ -29,7 +29,7 @@ function Finishing({finishing, setFinishing}) {
 	return (
 		<Grid container spacing={1}>
 			<Grid item xs={12}>
-				<Typography variant="h6" color="primary">
+				<Typography variant="h6">
 					Acabamento
 				</Typography>
 			</Grid>
@@ -41,7 +41,11 @@ function Finishing({finishing, setFinishing}) {
 					>
 						<Grid container spacing={1}>
 							{options.map(o => (
-								<Grid item xs={12} sm={4} key={'select-finishing-' + o}>
+								<Grid
+									item
+									xs={12}
+									key={'select-finishing-' + o}
+								>
 									<FormControlLabel
 										value={o}
 										control={<Radio/>}
@@ -59,6 +63,7 @@ function Finishing({finishing, setFinishing}) {
 
 const options = [
 	'STANDARD',
+	'PRECISION',
 	'RECTIFIED',
 	'POLISHED',
 ];

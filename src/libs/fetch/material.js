@@ -2,20 +2,16 @@ import { handleGraphQLResponse } from './handler';
 
 const materialsQuery = `
 query RootQuery {
-	materials {
+	material_types {
 		id
 		name
-		material_types {
+		heat_treatments {
 			id
 			name
-			heat_treatments {
-				id
-				name
-			}
-			superficial_treatments {
-				id
-				name
-			}
+		}
+		superficial_treatments {
+			id
+			name
 		}
 	}
 }
@@ -34,7 +30,7 @@ export async function getMaterials() {
 			}),
 		});
 
-		return await handleGraphQLResponse(res, 'materials');
+		return await handleGraphQLResponse(res, 'material_types');
 	} catch (err) {
 		console.error(err);
 

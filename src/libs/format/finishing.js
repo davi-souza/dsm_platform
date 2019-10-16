@@ -12,10 +12,12 @@
  */
 export function renderFinishing(raw) {
 	switch (raw) {
+		case 'PRECISION':
+			return 'Com precisão - 1.6 Ra';
 		case 'RECTIFIED':
-			return 'Retificado - 1.6 Ra';
+			return 'Retificado - 0.8 Ra';
 		case 'POLISHED':
-			return 'Polido - 0.8 Ra';
+			return 'Polido - 0.4 Ra';
 		default:
 			return 'Padrão - 3.2 Ra';
 	};

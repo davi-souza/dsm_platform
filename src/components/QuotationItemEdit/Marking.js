@@ -4,34 +4,34 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Select from 'react-select';
 
-function Engraving({engraving, setEngraving}) {
+function Marking({marking, setMarking}) {
 	const [
-		selectedEngraving,
-		setSelectedEngraving
-	] = React.useState(null);
+		selectedMarking,
+		setSelectedMarking
+	] = React.useState(options[0]);
 
 	React.useEffect(() => {
-		setSelectedEngraving(
-			options.find(o => o.value === engraving)
+		setSelectedMarking(
+			options.find(o => o.value === marking)
 		);
-	}, [engraving]);
+	}, [marking]);
 
-	function handleEngravingChange(newEngraving) {
-		setEngraving(newEngraving.value);
+	function handleMarkingChange(newMarking) {
+		setMarking(newMarking.value);
 	}
 
 	return (
 		<Grid container spacing={2}>
 			<Grid item xs={12}>
-				<Typography color="primary" variant="h6">
+				<Typography variant="h6">
 					Gravação
 				</Typography>
 			</Grid>
 			<Grid item xs={12}>
 				<Select
-					value={selectedEngraving}
+					value={selectedMarking}
 					options={options}
-					onChange={handleEngravingChange}
+					onChange={handleMarkingChange}
 				/>
 			</Grid>
 		</Grid>
@@ -40,16 +40,16 @@ function Engraving({engraving, setEngraving}) {
 
 const options = [
 	{ label: 'Nenhuma', value: null, },
-	{ label: 'Tipada', value: 'TIPED', },
+	{ label: 'Tipada', value: 'TYPED', },
 	{ label: 'Caneca elétrica/pneumática', value: 'ELETRIC_PNEUMATIC_PEN', },
 	{ label: 'Usinagem em baixo relevo', value: 'LOW_RELIEF_MACHINING', },
 	{ label: 'LASER', value: 'LASER', },
 	{ label: 'Eletroquímica', value: 'ELECTROCHEMISTRY', },
 ];
 
-Engraving.propTypes = {
-	engraving: PropTypes.string,
-	setEngraving: PropTypes.func.isRequired,
+Marking.propTypes = {
+	marking: PropTypes.string,
+	setMarking: PropTypes.func.isRequired,
 };
 
-export default Engraving;
+export default Marking;

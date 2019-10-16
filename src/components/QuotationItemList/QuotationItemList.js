@@ -5,7 +5,6 @@ import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import Grid from '@material-ui/core/Grid';
 import { withStyles } from '@material-ui/styles';
 import QuotationItem from '../QuotationItem';
-import QuotationBasket from '../QuotationBasket';
 import QuotationContext from '../../contexts/QuotationContext';
 import './QuotationItemList.scss';
 
@@ -17,10 +16,19 @@ function QuotationItemList({classes}) {
 
 	if ((!items || items.length === 0) && !itemsLoading) {
 		return (
-			<div className="quotation-item-list__empty">
-				<CloudUploadIcon className={classes.uploadIcon} />
-				<span>Faça upload do seu arquivo!</span>
-			</div>
+			<Grid
+				container
+				direction="column"
+				justify="center"
+				alignItems="center"
+			>
+				<Grid item xs={12}>
+					<CloudUploadIcon className={classes.uploadIcon} />
+				</Grid>
+				<Grid item xs={12}>
+					<span className={classes.emptyMessage}>Faça upload do seu arquivo!</span>
+				</Grid>
+			</Grid>
 		);
 	} else if ((!items || items.length === 0) && itemsLoading) {
 		return (
@@ -56,15 +64,6 @@ function QuotationItemList({classes}) {
 						/>
 					</Grid>
 				))}
-				<Grid
-					className={classes.basketGrid}
-					item
-					xs={12}
-				>
-					<QuotationBasket
-						items={items}
-					/>
-				</Grid>
 			</Grid>
 		);
 	}
@@ -72,8 +71,12 @@ function QuotationItemList({classes}) {
 
 const styles = {
 	uploadIcon: {
-		color: 'rgba(69, 90, 100, 0.1)',
+		color: 'rgba(36, 47, 64, 0.1)',
 		fontSize: '20rem',
+	},
+	emptyMessage: {
+		color: 'rgba(36, 47, 64, 0.1)',
+		fontSize: '2rem',
 	},
 	loadingGrid: {
 		height: '50vh',

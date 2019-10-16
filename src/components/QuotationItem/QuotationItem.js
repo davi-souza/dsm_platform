@@ -1,90 +1,86 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Grid from '@material-ui/core/Grid';
 import Divider from '@material-ui/core/Divider';
+import Grid from '@material-ui/core/Grid';
+import { withStyles } from '@material-ui/core/styles';
 import HeaderComponent from './HeaderComponent';
-import BaseConfigComponent from '../BaseConfig';
+import ConfigSummary from './ConfigSummary';
 import FooterComponent from './FooterComponent';
-import { renderFinishing } from '../../libs/format/finishing';
-import { renderScrew } from '../../libs/format/screw';
-import './QuotationItem.scss';
+import { primary, borders } from '../../themes';
 
-function QuotationItem({index, item}) {
-	const {
-		material_type,
-		heat_treatment,
-		superficial_treatment,
-		tolerance,
-		finishing,
-		screw,
-	} = item;
-
+function QuotationItem({classes, index, item}) {
 	return (
-		<div className="quotation-item">
-			<HeaderComponent
-				index={index}
-				item={item}
-			/>
-			<Divider light />
-			<Grid
-				container
-				direction="row"
-				justify="space-around"
-				alignItems="center"
-				spacing={2}
-				className="quotation-item-config"
-			>
-				<Grid item xs={6} sm={4} md={2}>
-					<BaseConfigComponent
-						label="Material"
-						value={material_type.name}
-					/>
-				</Grid>
-				<Grid item xs={6} sm={4} md={2}>
-					<BaseConfigComponent
-						label="Tratamento térmico"
-						value={
-							heat_treatment ? heat_treatment.name : null
-						}
-					/>
-				</Grid>
-				<Grid item xs={6} sm={4} md={2}>
-					<BaseConfigComponent
-						label="Tratamento superficial"
-						value={
-							superficial_treatment ? superficial_treatment.name : null
-						}
-					/>
-				</Grid>
-				<Grid item xs={6} sm={4} md={2}>
-					<BaseConfigComponent
-						label="Menor tolerância"
-						value={tolerance}
-					/>
-				</Grid>
-				<Grid item xs={6} sm={4} md={2}>
-					<BaseConfigComponent
-						label="Acabamento"
-						value={renderFinishing(finishing)}
-					/>
-				</Grid>
-				<Grid item xs={6} sm={4} md={2}>
-					<BaseConfigComponent
-						label="Roscas"
-						value={renderScrew(screw)}
-					/>
+		<Grid container className={classes.quotationItem}>
+			<Grid item xs={12}>
+				<HeaderComponent
+					index={index}
+					item={item}
+				/>
+			</Grid>
+			<Grid item xs={12}>
+				<Divider light />
+			</Grid>
+			<Grid item xs={12}>
+				<Grid
+					container
+				>
+					<Grid item className={classes.contentGrid}>
+						<img
+							alt={item.name}
+							className={classes.itemImg}
+							src="https://via.placeholder.com/500?text=IMAGEM+DA+PEÇA"
+						/>
+					</Grid>
+					<Grid item className={classes.configSummary}>
+						<ConfigSummary
+							item={item}
+						/>
+					</Grid>
 				</Grid>
 			</Grid>
-			<Divider light />
-			<FooterComponent
-				item={item}
-			/>
-		</div>
+			<Grid item xs={12}>
+				<Divider light />
+			</Grid>
+			<Grid item xs={12}>
+				<FooterComponent
+					item={item}
+				/>
+			</Grid>
+		</Grid>
 	);
 }
 
+const imageSize = '12rem',
+	styles = {
+		quotationItem: {
+			backgroundColor: '#ffffff',
+			border: `1px solid ${borders.primary}`,
+			borderRadius: '0.5rem',
+			color: primary.main,
+		},
+		contentGrid: {
+			color: '#000000',
+			maxHeight: imageSize,
+			minHeight: imageSize,
+			maxWidth: imageSize,
+			minWidth: imageSize,
+		},
+		itemImg: {
+			maxHeight: imageSize,
+			minHeight: imageSize,
+			maxWidth: imageSize,
+			minWidth: imageSize,
+		},
+		configSummary: {
+			flexGrow: 1,
+			maxHeight: imageSize,
+			minHeight: imageSize,
+		},
+	};
+
 QuotationItem.propTypes = {
+	classes: PropTypes.object,
 	item: PropTypes.object.isRequired,
 };
 
-export default QuotationItem;
+export default withStyles(styles)(QuotationItem);

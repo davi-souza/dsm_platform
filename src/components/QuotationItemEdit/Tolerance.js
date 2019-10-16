@@ -1,17 +1,29 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import FormControl from '@material-ui/core/FormControl';
 import Grid from '@material-ui/core/Grid';
-import TextField from '@material-ui/core/TextField';
+import Radio from '@material-ui/core/Radio';
+import RadioGroup from '@material-ui/core/RadioGroup';
 import Typography from '@material-ui/core/Typography';
-import InputAdornment from '@material-ui/core/InputAdornment';
+import { renderTolerance } from '../../libs/format/tolerance';
 
 function Tolerance({tolerance, setTolerance}) {
-	function handleToleranceChange(event) {
-		let newValue = event.target.value;
+	const [
+		selectedTolerance,
+		setSelectedTolerance
+	] = React.useState(options[0]);
 
-		if (/^\d*$/.test(newValue)) {
-			setTolerance(newValue);
+	React.useEffect(() => {
+		if (tolerance === null) {
+			setSelectedTolerance(options[0]);
+		} else {
+			setSelectedTolerance(tolerance);
 		}
+	}, [tolerance]);
+
+	function handleToleranceChange(event) {
+		setTolerance(event.target.value);
 	}
 
 	return (
@@ -22,26 +34,42 @@ function Tolerance({tolerance, setTolerance}) {
 					alignItems="flex-start"
 				>
 					<Grid item xs={12}>
-						<Typography variant="h6" color="primary">
+						<Typography variant="h6">
 							Menor Tolerância
 						</Typography>
 					</Grid>
-					<Grid item xs={12} className="quotation-item-edit__tolerance-finishing-grid">
-						<TextField
-							InputProps={{
-								startAdornment: <InputAdornment position="start">0.</InputAdornment>,
-								endAdornment: <InputAdornment position="end">mm</InputAdornment>
-							}}
-							onChange={handleToleranceChange}
-							type="text"
-							value={tolerance !== null ? tolerance : ''}
-						/>
+					<Grid item xs={12}>
+						<FormControl component="fieldset" fullWidth>
+							<RadioGroup
+								value={selectedTolerance}
+								onChange={handleToleranceChange}
+							>
+								<Grid container spacing={1}>
+									{options.map(o => (
+										<Grid item xs={12} key={'select-tolerance-' + o}>
+											<FormControlLabel
+												value={o}
+												control={<Radio/>}
+												label={renderTolerance(o)}
+											/>
+										</Grid>
+									))}		
+								</Grid>
+							</RadioGroup>
+						</FormControl>
 					</Grid>
 				</Grid>
 			</Grid>
 		</Grid>
 	);
 }
+
+const options = [
+	'HIGH',
+	'MEDIUM',
+	'LOW',
+	'VERY_LOW',
+];
 
 Tolerance.propTypes = {
 	tolerance: PropTypes.string,

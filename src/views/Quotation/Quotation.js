@@ -1,14 +1,20 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import Container from '@material-ui/core/Container';
+import Grid from '@material-ui/core/Grid';
+import { withStyles } from '@material-ui/core/styles';
+import AppBar from '../../components/AppBar';
 import QuotationUpload from '../../components/QuotationUpload';
 import QuotationItemList from '../../components/QuotationItemList';
+import QuotationCart from '../../components/QuotationCart';
 import AppContext from '../../contexts/AppContext';
 import QuotationContext from '../../contexts/QuotationContext';
+import { uploadFile } from '../../libs/fetch/upload';
 import { getMaterials } from '../../libs/fetch/material';
 import { changePartConfig } from '../../libs/fetch/part';
 import './Quotation.scss';
 
-function Quotation() {
+function Quotation({classes}) {
 	const [items, setItems] = React.useState(mockItems);
 	const [itemsLoading, setItemsLoading] = React.useState(false);
 	const [materials, setMaterials] = React.useState([]);
@@ -48,8 +54,8 @@ function Quotation() {
 			});
 	}
 
-	function addItem(item) {
-		setItems([...items, item]);
+	function addItems(newItems) {
+		setItems([...items, ...newItems]);
 	}
 
 	function removeItem(index) {
@@ -58,24 +64,65 @@ function Quotation() {
 		setItems(newItems);
 	}
 
+	function addAuxFiles(itemIndex) {
+		return function (newFiles) {
+			const newItems = items.map((item, i) => {
+				if (i === itemIndex) {
+					item.auxiliary_files = [...item.auxiliary_files, ...newFiles];
+				}
+
+				return item;
+			});
+
+			setItems(newItems);
+		};
+	}
+
 	return (
 		<QuotationContext.Provider value={{
 			items,
 			itemsLoading,
+			addAuxFiles,
 			setItemsLoading,
 			savePartConfigChanges,
-			addItem,
 			removeItem,
 			materials,
 		}}>
-			<Container className="quotation-view__container" maxWidth="lg">
-				<QuotationItemList />
-				<QuotationUpload />
+			<AppBar />
+			<QuotationCart />
+			<Container maxWidth="lg">
+				<Grid container className={classes.gridContainer}>
+					<Grid item xs={12}>
+						<QuotationItemList />
+					</Grid>
+					<Grid item xs={12}>
+						<QuotationUpload
+							addItems={addItems}
+							handleUpload={uploadFile}
+							id="upload-part-files"
+						/>
+					</Grid>
+				</Grid>
 			</Container>
 		</QuotationContext.Provider>
 	);
 }
 
-const mockItems = Array(1).fill(JSON.parse('{"id":"e5906b4e-0db2-47f3-8f58-6195d0e0ecef","name":"test.stp","material_type":{"id":"cfc560d7-b2e1-47d8-921c-1c4a5720205d","name":"Alumínio 5083 / 5082"},"heat_treatment":null,"superficial_treatment":null,"tolerance":null,"finishing":null,"screw":null,"amount":1,"unit_price":31657}'));
+const mockItems = Array(1).fill(JSON.parse('{"id":"25cf1559-f160-4d60-998b-327247ea0811","name":"RMF27027-10,000F7X040,00X15,000G6X050,00.stp","dimensions":"26.00mm x 26.00mm x 85.00mm","auxiliary_files":[],"material_type":{"id":"60808daf-4376-46e8-b22b-c82c4c1c00ca","name":"Alumínio 6351 T6"},"heat_treatment":null,"superficial_treatment":null,"tolerance":null,"finishing":null,"screw":null,"marking":null,"knurled":null,"report":null,"amount":1,"unit_price":17762}'));
 
-export default Quotation;
+const styles = {
+	gridContainer: {
+		position: 'relative',
+	},
+	basketGrid: {
+		marginBottom: '1rem',
+		position: 'sticky',
+		top: '0',
+	},
+};
+
+Quotation.propTypes = {
+	classes: PropTypes.object,
+};
+
+export default withStyles(styles)(Quotation);

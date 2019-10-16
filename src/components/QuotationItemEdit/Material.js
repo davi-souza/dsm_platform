@@ -23,21 +23,23 @@ function Materials({materialType, setMaterialType}) {
 
 	React.useEffect(() => {
 		setOptions(
-			materials.map(m => m.material_types.map(mt => ({
-				label: mt.name,
-				value: mt.id,
-			}))).flat(1)
+			materials.map(m => ({
+				label: m.name,
+				id: m.id,
+			}))
 		);
 	}, [materials]);
 
 	function handleMaterialTypeChange(newMaterialType) {
-		setMaterialType(findMaterialType(materials, newMaterialType.value));
+		setMaterialType(
+			materials.find(m => m.id === newMaterialType)
+		);
 	}
 
 	return (
 		<Grid container spacing={2}>
 			<Grid item xs={12}>
-				<Typography color="primary" variant="h6">
+				<Typography variant="h6">
 					Material
 				</Typography>
 			</Grid>
@@ -50,16 +52,6 @@ function Materials({materialType, setMaterialType}) {
 			</Grid>
 		</Grid>
 	);
-}
-
-function findMaterialType(materials, materialTypeId) {
-	for (const m of materials) {
-		for (const mt of m.material_types) {
-			if (mt.id === materialTypeId) {
-				return {...mt};
-			}
-		}
-	}
 }
 
 Materials.propTypes = {
