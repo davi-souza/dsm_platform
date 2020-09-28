@@ -118,7 +118,6 @@ function QuotationItemEdit({classes, item, itemIndex, open, onCancel}) {
 
 	const fullScreen = useMediaQuery('(max-width:600px)');
 
-
 	const ConfigEditComponents = [
 		<Material
 			materialType={materialType}
@@ -258,7 +257,7 @@ function QuotationItemEdit({classes, item, itemIndex, open, onCancel}) {
 				>
 					<Button
 						color="inherit"
-						disabled={!hasChanged || needAuxFile}
+						//disabled={!hasChanged || needAuxFile}
 						onClick={handleSaveConfig}
 					>
 						Salvar

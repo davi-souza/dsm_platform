@@ -108,7 +108,7 @@ function Quotation({classes}) {
 	);
 }
 
-const mockItems = Array(1).fill(JSON.parse('{"id":"25cf1559-f160-4d60-998b-327247ea0811","name":"RMF27027-10,000F7X040,00X15,000G6X050,00.stp","dimensions":"26.00mm x 26.00mm x 85.00mm","auxiliary_files":[],"material_type":{"id":"60808daf-4376-46e8-b22b-c82c4c1c00ca","name":"Alumínio 6351 T6"},"heat_treatment":null,"superficial_treatment":null,"tolerance":null,"finishing":null,"screw":null,"marking":null,"knurled":null,"report":null,"amount":1,"unit_price":17762}'));
+const mockItems = Array(1).fill(JSON.parse('{"id":"186e8788-b353-4331-aabf-0d6c6c28a069","name":"test.stp","dimensions":"26.00mm x 26.00mm x 85.00mm","auxiliary_files":[],"material_type":{"id":"60808daf-4376-46e8-b22b-c82c4c1c00ca","name":"Alumínio 6351 T6"},"heat_treatment":null,"superficial_treatment":null,"tolerance":null,"finishing":null,"screw":null,"marking":null,"knurled":null,"report":null,"amount":1,"unit_price":17840}'));
 
 const styles = {
 	gridContainer: {

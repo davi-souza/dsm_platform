@@ -17,12 +17,12 @@ function QuotationCart({classes}) {
 		<AppBar elevation={0} position="sticky" className={classes.appBar}>
 			<Toolbar variant="dense">
 				<Typography	color="inherit" className={classes.title} variant="body1">
-					Carrinho de compras
+					Sumário
 				</Typography>
 				<CartInfo />
 				<Button color="inherit" size="small" onClick={handleBuyClick}>
 					<ShoppingCartIcon className={classes.buttonIcon} />
-					Comprar
+					Terminar
 				</Button>
 			</Toolbar>
 		</AppBar>

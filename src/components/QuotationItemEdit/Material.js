@@ -32,7 +32,7 @@ function Materials({materialType, setMaterialType}) {
 
 	function handleMaterialTypeChange(newMaterialType) {
 		setMaterialType(
-			materials.find(m => m.id === newMaterialType)
+			materials.find(m => m.id === newMaterialType.id)
 		);
 	}
 

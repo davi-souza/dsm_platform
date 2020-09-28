@@ -37,7 +37,7 @@ function CartInfo({classes}) {
 					{renderMoney(itemsTotalPrice)}
 				</Grid>
 			</Grid>
-			<Grid
+      {/*<Grid
 				alignItems="center"
 				className={classes.infoContainer}
 				container
@@ -56,7 +56,7 @@ function CartInfo({classes}) {
 				>
 					01/11/2019
 				</Grid>
-			</Grid>
+			</Grid>*/}
 		</React.Fragment>
 	);
 }

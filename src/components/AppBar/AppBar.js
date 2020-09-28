@@ -10,7 +10,7 @@ function AppBarComponent({classes}) {
 	return (
 		<AppBar color="primary" elevation={0} position="static" className={classes.appBar}>
 			<Toolbar variant="dense">
-				<Typography variant="h6" className={classes.title}>Mech4u</Typography>
+				<Typography variant="h6" className={classes.title}>DSM</Typography>
 				<Button color="inherit" size="small">Contato</Button>
 				<Button color="inherit" size="small">Log In</Button>
 			</Toolbar>
