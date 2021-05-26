@@ -4,14 +4,14 @@ services:
     platform:
         image: node:12.18.4-stretch-slim
         container_name: platform
-        working_dir: /mech4u/platform/
+        working_dir: /dsm/platform/
         command: yarn start
         volumes:
-            - ./:/mech4u/platform/:consistent
+            - ./:/dsm/platform/:consistent
         ports:
             - 3000:3000
 
 networks:
     default:
         external:
-            name: ds_network
+            name: dsm_network
