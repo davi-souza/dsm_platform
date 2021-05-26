@@ -1,42 +1,46 @@
-# Mech4u Platform
+# DSM Platform
 
-## 1. Desenvolvimento
+## 1. Description
 
-### 0. Antes de tudo (assim que clonar)
+Front end of the DSM project. It uses react and material-ui
 
-Caso não exista, é preciso criar o _docker network_ do projeto
+## 2. Development
+
+### 0. Before all
+
+If needed, create the network
 
 ```bash
-docker network create mech4u_network
+docker network create dsm_network
 ```
 
-Rodar comando para instalar os pacotes
+Install packages
 
 ```bash
 docker-compose run platform yarn
 ```
 
-### 1. Subir servidor de desenvolvimento
+### 1. Start development server
 
 ```bash
 docker-compose up platform
 ```
 
-### 2. Rodar testes
+### 2. Run tests
 
-Caso você esteja dentro do container, basta rodar
+You need to be inside the container
 
 ```bash
 yarn test
 ```
 
-Para entrar no container:
+To get in the container:
 
 ```bash
 docker exec -it platform /bin/sh
 ```
 
-### 3. Para desligar o container
+### 3. Shut down the container
 
 ```bash
 docker rm platform
